@@ -1,12 +1,13 @@
 {
-  "name": "react-ts-vite-template",
+  "name": "mystoreapp-frontend",
+  "description": "My Store App Frontend",
   "version": "1.0.0",
   "author": {
     "name": "YesnielX",
     "url": "https://github.com/YesnielX"
   },
   "scripts": {
-    "dev": "vite --port 4000",
+    "dev": "vite",
     "build": "tsc && vite build",
     "serve": "vite preview",
     "test": "jest",
@@ -14,11 +15,14 @@
     "test:e2e": "cypress open",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\" && git update-index --again",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --quiet",
+    "lint:fix": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix --quiet",
     "prepare": "husky install"
   },
   "dependencies": {
+    "axios": "^0.21.4",
     "react": "^17.0.0",
-    "react-dom": "^17.0.0"
+    "react-dom": "^17.0.0",
+    "react-router-dom": "^5.3.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.14.1",
@@ -29,6 +33,7 @@
     "@types/node": "^16.7.1",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "@types/react-router-dom": "^5.3.0",
     "@typescript-eslint/eslint-plugin": "^4.29.2",
     "@typescript-eslint/parser": "^4.29.2",
     "@vitejs/plugin-react-refresh": "^1.3.1",
@@ -50,7 +55,6 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.0.6",
     "prettier": "^2.3.2",
-    "sass": "^1.38.0",
     "ts-jest": "^27.0.5",
     "typescript": "^4.3.2",
     "vite": "^2.4.4"

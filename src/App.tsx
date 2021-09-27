@@ -1,4 +1,10 @@
+import Home from './components/Home';
+
 const App = () => {
-  return <h1 data-testid="title">Hello world!</h1>;
+    return (
+        <div>
+            <Home />
+        </div>
+    );
 };
 export default App;
