@@ -40,11 +40,25 @@ export const user = (): IUser => {
     return user;
 };
 
+export type IProduct = {
+    _id: string;
+    name: string;
+    description: string;
+    price: number;
+    purchasePrice: number;
+    categories: string[];
+    sizes: string[];
+    stock: number;
+    solds: number;
+    imagePath: string;
+    author: string;
+};
+
 export type IStore = {
     _id: string;
     name: string;
     imagePath: string;
-    products: string[];
+    products: IProduct[];
     managers: string[];
     employees: string[];
     author: IUser;

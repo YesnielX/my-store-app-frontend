@@ -24,7 +24,12 @@ export default () => {
                 const store = myStores[i];
                 return (
                     <div className="column is-3" key={store.name}>
-                        <div className="card">
+                        <div
+                            className="card"
+                            style={{
+                                minWidth: '300px',
+                            }}
+                        >
                             <div className="card-image">
                                 <figure className="image is-1by1 mx-3 my-3">
                                     <img
@@ -41,6 +46,17 @@ export default () => {
                                         </p>
                                     </div>
                                 </div>
+                                <Link
+                                    className="button is-info"
+                                    to={{
+                                        pathname: '/Store',
+                                        state: {
+                                            store: store,
+                                        },
+                                    }}
+                                >
+                                    Ver Tienda
+                                </Link>
                             </div>
                         </div>
                     </div>

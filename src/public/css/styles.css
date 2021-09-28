@@ -2,7 +2,7 @@
     .navbar-menu {
         display: block;
         opacity: 0;
-        position: absolute; 
+        position: absolute;
         left: 0;
         right: 0;
         height: 190px;
@@ -17,4 +17,17 @@
     opacity: 1;
     transform: none;
     pointer-events: auto;
+}
+
+.product-detail .content-detail {
+    text-align: left !important;
+}
+.product-detail .discount {
+    font-size: 1.2em;
+    text-align: left;
+    text-decoration: line-through;
+}
+.product-detail .price {
+    font-size: 1.7em;
+    text-align: left;
 }
