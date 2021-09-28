@@ -2,13 +2,22 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
 import cogoToast from 'cogo-toast';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useLocation } from 'react-router-dom';
 
 import { IProduct } from '../../services/api';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default ({ location }) => {
-    console.log(location);
+export default () => {
+    const location: {
+        pathname: string;
+        state: {
+            product: IProduct;
+        };
+    } = useLocation();
+
+    if (location.state === undefined || location.state.product === undefined) {
+        return <Redirect to="/" />;
+    }
 
     if (location.state === undefined) {
         return <Redirect to="/" />;

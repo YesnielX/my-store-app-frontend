@@ -1,15 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
-import { Link, Redirect } from 'react-router-dom';
+import { Link, Redirect, useLocation } from 'react-router-dom';
 
 import { IStore } from '../../services/api';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default ({ location }) => {
-    console.log(location);
+export default () => {
+    const location: {
+        pathname: string;
+        state: {
+            store: IStore;
+        };
+    } = useLocation();
 
-    if (location.state === undefined) {
+    if (location.state === undefined || location.state.store === undefined) {
         return <Redirect to="/" />;
     }
 
