@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import cogoToast from 'cogo-toast';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -26,7 +27,7 @@ export default () => {
             errorMessage?.classList.add('animate__flipOutX');
             void register(username, email, password).then(res => {
                 console.log(res);
-                if (res.status === 200) {
+                if (res.status === 201) {
                     res.data.data.isLogged = true;
                     res.data.data.isLogged = true;
                     localStorage.setItem('user', JSON.stringify(res.data.data));
@@ -34,9 +35,12 @@ export default () => {
                     setTimeout(() => {
                         window.location.href = '/';
                     }, 1200);
+                    void cogoToast.success('Successfully registered!');
                 } else {
                     console.log('Error: Log: ');
                     console.log(res.data.error);
+                    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                    void cogoToast.error(`Error: ${res.data.error}`);
                 }
             });
         }
@@ -51,7 +55,7 @@ export default () => {
     }, []);
 
     return (
-        <section className="container m-3 mgt-large mt-6">
+        <section className="section m-3 mgt-large mt-6">
             <div className="columns is-multiline">
                 <div className="column is-8 is-offset-2 register">
                     <div className="columns">

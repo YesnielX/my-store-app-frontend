@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import cogoToast from 'cogo-toast';
 import { BaseSyntheticEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -19,6 +20,19 @@ export default () => {
                 setTimeout(() => {
                     window.location.href = '/';
                 }, 1200);
+                void cogoToast.success(
+                    <div>
+                        <b>Awesome!</b>
+                        <div>Success</div>
+                    </div>
+                );
+            } else {
+                void cogoToast.error(
+                    <div>
+                        <b>Oops!</b>
+                        <div>Error: {res.data.message}</div>
+                    </div>
+                );
             }
         });
         e.preventDefault();
@@ -26,7 +40,7 @@ export default () => {
     };
 
     return (
-        <section className="container mt-6">
+        <section className="section mt-6">
             <div className="columns is-multiline">
                 <div className="column is-8 is-offset-2 register">
                     <div className="columns">
