@@ -1,5 +1,5 @@
 export default () => {
-    localStorage.setItem('user', '');
+    localStorage.clear();
     window.location.href = '/';
 
     return <></>;

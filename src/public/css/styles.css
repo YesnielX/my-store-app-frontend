@@ -9,12 +9,12 @@
 
         pointer-events: none;
     }
+}
 
-    .navbar-menu.is-active {
-        position: absolute;
-        top: 50px;
-        opacity: 1;
-        transform: none;
-        pointer-events: auto;
-    }
+.navbar-menu.is-active {
+    position: absolute;
+    top: 50px;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
 }

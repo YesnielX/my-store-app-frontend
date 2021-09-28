@@ -2,7 +2,7 @@
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { register, user } from '../../services/api';
+import { getStores, register, user } from '../../services/api';
 
 export default () => {
     const [username, setUsername] = useState('');
@@ -30,7 +30,10 @@ export default () => {
                     res.data.data.isLogged = true;
                     res.data.data.isLogged = true;
                     localStorage.setItem('user', JSON.stringify(res.data.data));
-                    window.location.href = '/';
+                    void getStores();
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1200);
                 } else {
                     console.log('Error: Log: ');
                     console.log(res.data.error);

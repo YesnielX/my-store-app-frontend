@@ -2,7 +2,7 @@
 import { BaseSyntheticEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { login } from '../../services/api';
+import { getStores, login } from '../../services/api';
 
 export default () => {
     const [email, setEmail] = useState('');
@@ -15,7 +15,10 @@ export default () => {
             if (res.status === 200) {
                 res.data.data.isLogged = true;
                 localStorage.setItem('user', JSON.stringify(res.data.data));
-                window.location.href = '/';
+                void getStores();
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1200);
             }
         });
         e.preventDefault();

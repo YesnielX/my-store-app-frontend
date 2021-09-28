@@ -23,7 +23,7 @@ export const register = async (
     });
 };
 
-type Iuser = {
+type IUser = {
     _id: string;
     username: string;
     email: string;
@@ -33,9 +33,30 @@ type Iuser = {
     token: string;
 };
 
-export const user = (): Iuser => {
-    const user: Iuser = JSON.parse(
+export const user = (): IUser => {
+    const user: IUser = JSON.parse(
         localStorage.getItem('user') || '{}'
-    ) as Iuser;
+    ) as IUser;
     return user;
+};
+
+export type IStore = {
+    _id: string;
+    name: string;
+    imagePath: string;
+    products: string[];
+    managers: string[];
+    employees: string[];
+    author: IUser;
+};
+
+export const getStores = async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const data = await axios.get(`${SERVER_HOST}/stores`, {
+        headers: {
+            token: user().token,
+        },
+    });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    localStorage.setItem('myStores', JSON.stringify(data.data.data));
 };

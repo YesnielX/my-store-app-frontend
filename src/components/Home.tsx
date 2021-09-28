@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import Header from './Header';
-import Store from './Store';
+import Stores from './Stores';
 
 function loadRoutes() {
     const context = import.meta.globEager('./pages/*.tsx');
@@ -29,15 +29,13 @@ function loadRoutes() {
 
 export default () => {
     return (
-        <div className="my-3">
+        <div className="my-3 animate__animated animate__fadeIn" id="main">
             <Router>
                 <Header />
-                <div
-                    className="container
-"
-                >
+                <div className="container">
                     <Switch>{loadRoutes()}</Switch>
                 </div>
+                <Route exact path="/" component={Stores}></Route>
             </Router>
         </div>
     );
