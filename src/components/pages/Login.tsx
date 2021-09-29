@@ -11,30 +11,33 @@ export default () => {
 
     const setLogin = (e: BaseSyntheticEvent) => {
         console.log(email, password);
-        void login(email, password).then(res => {
-            console.log(res);
-            if (res.status === 200) {
-                res.data.data.isLogged = true;
-                localStorage.setItem('user', JSON.stringify(res.data.data));
-                void getStores();
-                setTimeout(() => {
-                    window.location.href = '/';
-                }, 1200);
-                void cogoToast.success(
-                    <div>
-                        <b>Awesome!</b>
-                        <div>Success</div>
-                    </div>
-                );
-            } else {
+        void login(email, password)
+            .then(res => {
+                console.log(res);
+                if (res.status === 200) {
+                    res.data.data.isLogged = true;
+                    localStorage.setItem('user', JSON.stringify(res.data.data));
+                    void getStores();
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1200);
+                    void cogoToast.success(
+                        <div>
+                            <b>Awesome!</b>
+                            <div>Success</div>
+                        </div>
+                    );
+                }
+            })
+            .catch(err => {
+                console.log(err.response);
                 void cogoToast.error(
                     <div>
                         <b>Oops!</b>
-                        <div>Error: {res.data.message}</div>
+                        <div>Error: {err.response.data.error}</div>
                     </div>
                 );
-            }
-        });
+            });
         e.preventDefault();
         e.stopPropagation();
     };

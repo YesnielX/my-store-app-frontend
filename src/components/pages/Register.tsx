@@ -25,24 +25,32 @@ export default () => {
         } else {
             errorMessage?.classList.add('is-hidden');
             errorMessage?.classList.add('animate__flipOutX');
-            void register(username, email, password).then(res => {
-                console.log(res);
-                if (res.status === 201) {
-                    res.data.data.isLogged = true;
-                    res.data.data.isLogged = true;
-                    localStorage.setItem('user', JSON.stringify(res.data.data));
-                    void getStores();
-                    setTimeout(() => {
-                        window.location.href = '/';
-                    }, 1200);
-                    void cogoToast.success('Successfully registered!');
-                } else {
-                    console.log('Error: Log: ');
-                    console.log(res.data.error);
-                    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                    void cogoToast.error(`Error: ${res.data.error}`);
-                }
-            });
+            void register(username, email, password)
+                .then(res => {
+                    console.log(res);
+                    if (res.status === 201) {
+                        res.data.data.isLogged = true;
+                        res.data.data.isLogged = true;
+                        localStorage.setItem(
+                            'user',
+                            JSON.stringify(res.data.data)
+                        );
+                        void getStores();
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 1200);
+                        void cogoToast.success('Successfully registered!');
+                    }
+                })
+                .catch(err => {
+                    console.log(err.response);
+                    void cogoToast.error(
+                        <div>
+                            <b>Oops!</b>
+                            <div>Error: {err.response.data.error}</div>
+                        </div>
+                    );
+                });
         }
         e.preventDefault();
         e.stopPropagation();
