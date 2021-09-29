@@ -40,13 +40,17 @@ export default () => {
                     >
                         <div className="navbar-end has-text-centered">
                             <div className="navbar-item has-dropdown is-hoverable">
-                                <Link
-                                    className="navbar-item"
-                                    to={'/Account'}
-                                    key={'router-account'}
-                                >
-                                    Account
-                                </Link>
+                                {user().isLogged ? (
+                                    <Link
+                                        className="navbar-item"
+                                        to={'/Account'}
+                                        key={'router-account'}
+                                    >
+                                        Account
+                                    </Link>
+                                ) : (
+                                    ''
+                                )}
                                 <Link
                                     className="navbar-item"
                                     to={'/Contact'}

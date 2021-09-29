@@ -3,6 +3,11 @@ import { Link } from 'react-router-dom';
 import { user } from '../../services/api';
 
 export default () => {
+    if ([user()].length < 0 || !user().isLogged) {
+        console.log('User not logged in');
+        window.location.href = '/';
+    }
+
     return (
         <section className="container mt-6 mx-4 has-text-centered animate__animated animate__slideInUp">
             <div>

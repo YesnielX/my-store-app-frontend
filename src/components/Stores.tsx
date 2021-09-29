@@ -91,7 +91,7 @@ export default () => {
                     </div>
                 </div>
             ) : (
-                <div className="section has-text-centered">
+                <div className="section has-text-centered mx-auto my-auto">
                     <Link
                         className={`button is-primary mr-4 ${
                             [user()].length !== 0 && user().isLogged
@@ -102,11 +102,13 @@ export default () => {
                     >
                         Please Log In
                     </Link>
-                    <img
-                        src="/images/login.svg"
-                        alt="login image"
-                        draggable="false"
-                    />
+                    <div>
+                        <img
+                            src="/images/login.svg"
+                            alt="login image"
+                            draggable="false"
+                        />
+                    </div>
                 </div>
             )}
         </div>

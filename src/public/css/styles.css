@@ -14,9 +14,8 @@
 .navbar-menu.is-active {
     position: absolute;
     top: 50px;
+    width: 100%;
     opacity: 1;
-    transform: none;
-    pointer-events: auto;
 }
 
 .product-detail .content-detail {
