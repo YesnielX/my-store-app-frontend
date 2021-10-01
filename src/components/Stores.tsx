@@ -6,7 +6,6 @@ import { getStores, IStore, user } from '../services/api';
 
 export default () => {
     const renderStores = (type: number) => {
-        void getStores();
         let myStores: Array<IStore> = [];
 
         if (type === 1) {
@@ -20,18 +19,17 @@ export default () => {
         }
 
         if (myStores.length) {
-            for (let i = 0; i < myStores.length; i++) {
-                const store = myStores[i];
+            return myStores.map(store => {
                 return (
                     <div className="column is-3" key={store.name}>
                         <div
                             className="card"
                             style={{
-                                minWidth: '300px',
+                                minHeight: '300px',
                             }}
                         >
-                            <div className="card-image">
-                                <figure className="image is-1by1 mx-3 my-3">
+                            <div className="card-image mx-3">
+                                <figure className="image is-1by1">
                                     <img
                                         src={store.imagePath}
                                         alt="store image"
@@ -61,8 +59,8 @@ export default () => {
                         </div>
                     </div>
                 );
-            }
-        } else {
+            });
+        } else if (type === 2) {
             return (
                 <div className="column is-4">
                     <img src="/images/empty.svg" alt="empty" />
@@ -80,6 +78,33 @@ export default () => {
                         <hr />
                         <div className="row columns is-multiline is-centered">
                             {renderStores(1)}
+                            <div className="column is-3">
+                                <div
+                                    className="card"
+                                    style={{
+                                        minHeight: '300px',
+                                    }}
+                                >
+                                    <div className="card-image">
+                                        <figure className="image is-1by1 mx-3 my-3">
+                                            <img
+                                                src="/images/createStore.svg"
+                                                alt="store image"
+                                            />
+                                        </figure>
+                                    </div>
+                                    <div className="card-content">
+                                        <Link
+                                            className="button is-info"
+                                            to={{
+                                                pathname: '/AddStore',
+                                            }}
+                                        >
+                                            Crear Tienda
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div className="section ">

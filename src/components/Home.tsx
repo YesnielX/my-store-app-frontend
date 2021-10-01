@@ -1,5 +1,7 @@
+import { Suspense } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
+import { getStores } from '../services/api';
 import Header from './Header';
 import Stores from './Stores';
 
@@ -28,15 +30,18 @@ function loadRoutes() {
 }
 
 export default () => {
+    void getStores();
     return (
-        <div className="my-3 animate__animated animate__fadeIn" id="main">
-            <Router>
-                <Header />
-                <div className="container">
-                    <Switch>{loadRoutes()}</Switch>
-                </div>
-                <Route exact path="/" component={Stores}></Route>
-            </Router>
-        </div>
+        <Suspense fallback={<>Loading...</>}>
+            <div className="my-3 animate__animated animate__fadeIn" id="main">
+                <Router>
+                    <Header />
+                    <div className="container">
+                        <Switch>{loadRoutes()}</Switch>
+                    </div>
+                    <Route exact path="/" component={Stores}></Route>
+                </Router>
+            </div>
+        </Suspense>
     );
 };

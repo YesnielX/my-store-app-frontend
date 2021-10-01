@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
 import cogoToast from 'cogo-toast';
 import { Redirect, useLocation } from 'react-router-dom';
 
@@ -23,7 +20,6 @@ export default () => {
         return <Redirect to="/" />;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const product: IProduct = location.state.product;
 
     const makeReport = () => {
@@ -34,28 +30,26 @@ export default () => {
         void cogoToast.success('Producto Vendido');
     };
 
-    // render store products
     const productRender = (
-        <div className="is-full" key={product._id}>
+        <div key={product._id}>
             <div
-                className="container product-detail box"
+                className=" product-detail box"
                 style={{
                     margin: 3,
                 }}
             >
                 <br />
-                <div className="columns">
-                    <div className="column is-5-desktop is-5-tablet is-12-mobile">
-                        <img
-                            src={product.imagePath}
-                            alt="image"
-                            style={{
-                                maxHeight: '500px',
-                            }}
-                        />
-                    </div>
-
-                    <div className="column is-7-desktop is-5-tablet is-12-mobile content-detail">
+                <div className="columns is-centered is-7-desktop">
+                    <div className="column is-full-desktop is-5-tablet is-mobile content-detail">
+                        <div className="has-text-centered">
+                            <img
+                                src={product.imagePath}
+                                alt="image"
+                                style={{
+                                    maxHeight: '500px',
+                                }}
+                            />
+                        </div>
                         <dt
                             style={{
                                 fontSize: '1.7em',
@@ -64,12 +58,14 @@ export default () => {
                         >
                             {product.name}
                         </dt>
+                        <hr />
                         <dt
                             style={{
                                 fontSize: '1.2em',
                                 textTransform: 'uppercase',
                             }}
                         >
+                            <p>Categorias: </p>
                             {product.categories.map((category, index) => (
                                 <span
                                     className="tag ml-1 is-primary"
@@ -86,6 +82,7 @@ export default () => {
                                 textTransform: 'uppercase',
                             }}
                         >
+                            <p>Tamaños: </p>
                             {product.sizes.map((category, index) => (
                                 <span
                                     className="tag ml-1 is-primary"
@@ -115,7 +112,6 @@ export default () => {
                                 <span>{product.price}</span>
                             </label>
                             <br />
-                            <br />
                         </div>
 
                         <div className="price">
@@ -136,7 +132,6 @@ export default () => {
                             <label className="tag is-primary is-rounded">
                                 <span>{product.stock}</span>
                             </label>
-                            <br />
                             <br />
                         </div>
 
