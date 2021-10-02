@@ -1,10 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { user } from '../services/api';
 
 export default () => {
     const [isActive, setIsActive] = useState(false);
+
+    window.onresize = () => {
+        console.log(window.innerWidth);
+        if (window.innerWidth > 768) {
+            setIsActive(false);
+        }
+    };
 
     return (
         <>
@@ -46,7 +53,7 @@ export default () => {
                                         to={'/Account'}
                                         key={'router-account'}
                                     >
-                                        Account
+                                        Cuenta
                                     </Link>
                                 ) : (
                                     ''
@@ -56,14 +63,14 @@ export default () => {
                                     to={'/Contact'}
                                     key={'router-contact'}
                                 >
-                                    Contact
+                                    Contactanos
                                 </Link>
                                 <Link
                                     className="navbar-item"
                                     to={'/About'}
                                     key={'router-about'}
                                 >
-                                    About
+                                    Sobre nosotros
                                 </Link>
                             </div>
                             <div className="navbar-item">
@@ -77,7 +84,7 @@ export default () => {
                                         }`}
                                         to="/Login"
                                     >
-                                        Log in
+                                        Iniciar Sesion
                                     </Link>
                                     <Link
                                         className={`button is-primary ${
@@ -88,7 +95,7 @@ export default () => {
                                         }`}
                                         to="/Register"
                                     >
-                                        <strong>Sign up</strong>
+                                        <strong>Registrarse</strong>
                                     </Link>
                                     <Link
                                         className={`button is-danger ${
@@ -99,7 +106,7 @@ export default () => {
                                         }`}
                                         to="/Logout"
                                     >
-                                        <strong>Logout</strong>
+                                        <strong>Cerrar Sesion</strong>
                                     </Link>
                                 </div>
                             </div>

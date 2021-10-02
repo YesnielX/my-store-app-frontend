@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import cogoToast from 'cogo-toast';
 import { ChangeEvent, useState } from 'react';
-import { Redirect, useLocation } from 'react-router-dom';
+import { Redirect, useHistory, useLocation } from 'react-router-dom';
 
 import {
     createProduct,
@@ -30,6 +30,8 @@ export default () => {
             storeId: string;
         };
     } = useLocation();
+
+    const history = useHistory();
 
     const loadImage = (e: ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) {
@@ -132,7 +134,7 @@ export default () => {
 
         void getStores();
 
-        window.location.href = '/';
+        history.goBack();
     };
 
     return (

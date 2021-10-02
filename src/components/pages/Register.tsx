@@ -25,32 +25,19 @@ export default () => {
         } else {
             errorMessage?.classList.add('is-hidden');
             errorMessage?.classList.add('animate__flipOutX');
-            void register(username, email, password)
-                .then(res => {
-                    console.log(res);
-                    if (res.status === 201) {
-                        res.data.data.isLogged = true;
-                        res.data.data.isLogged = true;
-                        localStorage.setItem(
-                            'user',
-                            JSON.stringify(res.data.data)
-                        );
-                        void getStores();
-                        setTimeout(() => {
-                            window.location.href = '/';
-                        }, 1200);
-                        void cogoToast.success('Successfully registered!');
-                    }
-                })
-                .catch(err => {
-                    console.log(err.response);
-                    void cogoToast.error(
-                        <div>
-                            <b>Oops!</b>
-                            <div>Error: {err.response.data.error}</div>
-                        </div>
-                    );
-                });
+            void register(username, email, password).then(res => {
+                console.log('abc: ', res);
+                if (res.status === 201) {
+                    res.data.data.isLogged = true;
+                    res.data.data.isLogged = true;
+                    localStorage.setItem('user', JSON.stringify(res.data.data));
+                    void getStores();
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1200);
+                    void cogoToast.success('Registrado!');
+                }
+            });
         }
         e.preventDefault();
         e.stopPropagation();
@@ -68,11 +55,7 @@ export default () => {
                 <div className="column is-8 is-offset-2 register">
                     <div className="columns">
                         <div className="column right has-text-centered">
-                            <h1 className="title is-4">Sign up today</h1>
-                            <p className="description">
-                                Lorem ipsum dolor, sit amet consectetur
-                                adipisicing elit
-                            </p>
+                            <h1 className="title is-4">Registro</h1>
                             <article
                                 className="message is-danger mt-5 animate__animated is-hidden"
                                 id="error-message"
@@ -105,7 +88,7 @@ export default () => {
                                     className="message-body"
                                     id="error-message-content"
                                 >
-                                    Please fill in all fields with valid
+                                    Por favor, rellene todos los campos.
                                 </div>
                             </article>
                             <form className="mt-4">
@@ -155,11 +138,12 @@ export default () => {
                                     className="button is-block is-primary is-fullwidth is-medium"
                                     onClick={setLogin}
                                 >
-                                    Register
+                                    Registrarse
                                 </button>
                                 <br />
-                                <Link to="/Login">Sign In</Link> &nbsp;·&nbsp;
-                                <Link to="/Contact">Need Help?</Link>
+                                <Link to="/Login">Iniciar Sesion</Link>{' '}
+                                &nbsp;·&nbsp;
+                                <Link to="/Contact">Ayuda</Link>
                             </form>
                         </div>
                     </div>

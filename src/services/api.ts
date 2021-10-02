@@ -28,14 +28,17 @@ axiosApiInstance.interceptors.response.use(
     error => {
         if (error.response) {
             switch (error.response.status) {
-                case 401 || 403 || 404 || 500:
+                case 401:
+                case 403:
+                case 404:
+                case 500:
                     void cogoToast.error(
-                        `Error: ${error.data.error as string}`
+                        `Error: ${error.response.data.error as string}`
                     );
                     break;
                 default:
                     void cogoToast.error(
-                        `Error: ${error.data.error as string}`
+                        `Error: ${error.response.data.error as string}`
                     );
                     break;
             }
@@ -44,6 +47,7 @@ axiosApiInstance.interceptors.response.use(
         return error;
     }
 );
+
 export type IServerResponse = {
     message: string;
     error: string;
@@ -85,12 +89,18 @@ export type IStore = {
 };
 
 export const login = async (email: string, password: string) => {
-    return await axiosApiInstance.get(`${SERVER_HOST}/user`, {
-        params: {
-            userOrEmail: email,
-            password,
-        },
-    });
+    return await axiosApiInstance
+        .get(`${SERVER_HOST}/user`, {
+            params: {
+                userOrEmail: email,
+                password,
+            },
+        })
+        .then(res => {
+            res.data.data.isLogged = true;
+            localStorage.setItem('user', JSON.stringify(res.data.data));
+            return res;
+        });
 };
 
 export const register = async (
@@ -123,8 +133,9 @@ export const uploadImage = async (image: FormData) => {
 
 export const getStores = async () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    await axiosApiInstance.get(`${SERVER_HOST}/stores`).then(res => {
+    return await axiosApiInstance.get(`${SERVER_HOST}/stores`).then(res => {
         localStorage.setItem('myStores', JSON.stringify(res.data.data || '[]'));
+        return res;
     });
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 };

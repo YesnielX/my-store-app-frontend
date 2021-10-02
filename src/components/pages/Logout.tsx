@@ -1,9 +1,12 @@
 import cogoToast from 'cogo-toast';
+import { useEffect } from 'react';
 
 export default () => {
-    localStorage.clear();
-    window.location.href = '/';
+    useEffect(() => {
+        localStorage.clear();
+        window.location.href = '/';
 
-    void cogoToast.success('You have been logged out.');
+        void cogoToast.success('Deslogueado.');
+    }, []);
     return <></>;
 };

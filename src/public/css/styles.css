@@ -7,7 +7,6 @@
         right: 0;
         height: 190px;
 
-        pointer-events: none;
     }
 }
 
@@ -16,6 +15,8 @@
     top: 50px;
     width: 100%;
     opacity: 1;
+    transform: none;
+    pointer-events: auto;
 }
 
 .product-detail .content-detail {

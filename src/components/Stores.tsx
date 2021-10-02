@@ -1,25 +1,36 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { getStores, IStore, user } from '../services/api';
 
 export default () => {
-    const renderStores = (type: number) => {
-        let myStores: Array<IStore> = [];
+    const [stores, setStores] = useState<IStore[]>([]);
+    const [storesManager, setStoresManager] = useState<IStore[]>([]);
+    const [loading, setLoading] = useState(true);
 
-        if (type === 1) {
-            myStores = JSON.parse(
-                localStorage.getItem('myStores') || '[]'
-            ).youStores;
-        } else if (type === 2) {
-            myStores = JSON.parse(
-                localStorage.getItem('myStores') || '[]'
-            ).managerStores;
+    useEffect(() => {
+        async function fetchData() {
+            await getStores().then(res => {
+                setLoading(false);
+                setStores(res.data.data.youStores);
+                setStoresManager(res.data.data.managerStores);
+            });
         }
+        if (user().isLogged) {
+            void fetchData();
+            setInterval(() => {
+                void fetchData();
+            }, 15000);
+        }
+    }, []);
 
-        if (myStores.length) {
-            return myStores.map(store => {
+    const renderStores = (type: number) => {
+        const storesToRender = type === 1 ? stores : storesManager;
+
+        if (storesToRender.length) {
+            return storesToRender.map(store => {
                 return (
                     <div className="column is-3" key={store.name}>
                         <div
@@ -60,7 +71,7 @@ export default () => {
                     </div>
                 );
             });
-        } else if (type === 2) {
+        } else if (!storesToRender.length && storesToRender === storesManager) {
             return (
                 <div className="column is-4">
                     <img src="/images/empty.svg" alt="empty" />
@@ -74,10 +85,18 @@ export default () => {
             {user().isLogged ? (
                 <div>
                     <div className="section">
-                        <h1 className="title">My Stores</h1>
+                        <h1 className="title">Mis Tiendas</h1>
                         <hr />
                         <div className="row columns is-multiline is-centered">
                             {renderStores(1)}
+                            {loading ? (
+                                <progress
+                                    className="progress is-small is-primary"
+                                    max="100"
+                                >
+                                    15%
+                                </progress>
+                            ) : null}
                             <div className="column is-3">
                                 <div
                                     className="card"
@@ -108,10 +127,18 @@ export default () => {
                         </div>
                     </div>
                     <div className="section ">
-                        <h1 className="title">My Manager Stores</h1>
+                        <h1 className="title">Tiendas Que Administro</h1>
                         <hr />
                         <div className="row columns is-multiline is-centered">
                             {renderStores(2)}
+                            {loading ? (
+                                <progress
+                                    className="progress is-small is-primary"
+                                    max="100"
+                                >
+                                    15%
+                                </progress>
+                            ) : null}
                         </div>
                     </div>
                 </div>
@@ -125,7 +152,7 @@ export default () => {
                         }`}
                         to="/Login"
                     >
-                        Please Log In
+                        Iniciar Sesion
                     </Link>
                     <div>
                         <img

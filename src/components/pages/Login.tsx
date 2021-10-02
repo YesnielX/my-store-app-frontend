@@ -11,33 +11,12 @@ export default () => {
 
     const setLogin = (e: BaseSyntheticEvent) => {
         console.log(email, password);
-        void login(email, password)
-            .then(res => {
-                console.log(res);
-                if (res.status === 200) {
-                    res.data.data.isLogged = true;
-                    localStorage.setItem('user', JSON.stringify(res.data.data));
-                    void getStores();
-                    setTimeout(() => {
-                        window.location.href = '/';
-                    }, 1200);
-                    void cogoToast.success(
-                        <div>
-                            <b>Awesome!</b>
-                            <div>Success</div>
-                        </div>
-                    );
-                }
-            })
-            .catch(err => {
-                console.log(err.response);
-                void cogoToast.error(
-                    <div>
-                        <b>Oops!</b>
-                        <div>Error: {err.response.data.error}</div>
-                    </div>
-                );
-            });
+        void login(email, password).then(res => {
+            console.log(res);
+            if (res.status === 200) {
+                window.location.href = '/';
+            }
+        });
         e.preventDefault();
         e.stopPropagation();
     };
@@ -48,8 +27,8 @@ export default () => {
                 <div className="column is-8 is-offset-2 register">
                     <div className="columns">
                         <div className="column right has-text-centered">
-                            <h1 className="title is-4">Login</h1>
-                            <p className="description">Welcome back!</p>
+                            <h1 className="title is-4">Inicio De Sesion</h1>
+                            <p className="description">Bienvenido de nuevo!</p>
                             <br />
                             <form>
                                 <div className="field">
@@ -69,7 +48,7 @@ export default () => {
                                         <input
                                             className="input is-medium"
                                             type="password"
-                                            placeholder="password"
+                                            placeholder="Contraseña"
                                             onChange={e =>
                                                 setPassword(e.target.value)
                                             }
@@ -80,22 +59,17 @@ export default () => {
                                     className="button is-block is-primary is-fullwidth is-medium"
                                     onClick={setLogin}
                                 >
-                                    Login
+                                    Iniciar sesion
                                 </button>
                                 <br />
-                                <small>
-                                    <em>
-                                        Lorem ipsum dolor sit amet consectetur.
-                                    </em>
-                                </small>
                                 <br />
-                                <Link to="/Register">Sign Up</Link>{' '}
+                                <Link to="/Register">Registrarse</Link>{' '}
                                 &nbsp;·&nbsp;
                                 <Link to="/forget-password">
-                                    Forgot Password
+                                    Olvide mi contraseña
                                 </Link>{' '}
                                 &nbsp;·&nbsp;
-                                <Link to="/Contact">Need Help?</Link>
+                                <Link to="/Contact">Ayuda</Link>
                             </form>
                         </div>
                     </div>

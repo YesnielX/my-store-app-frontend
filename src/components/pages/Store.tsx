@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import cogoToast from 'cogo-toast';
+import { useEffect, useState } from 'react';
 import { Link, Redirect, useLocation } from 'react-router-dom';
 
-import { deleteProduct, IStore } from '../../services/api';
+import { deleteProduct, getStores, IStore, user } from '../../services/api';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default () => {
@@ -27,59 +28,95 @@ export default () => {
         });
     };
 
-    const store: IStore =
-        (JSON.parse(localStorage.getItem('myStores') || '[]').youStores.find(
-            (store: IStore) => store._id === location.state.store._id
-        ) as IStore) ||
-        (JSON.parse(
-            localStorage.getItem('myStores') || '[]'
-        ).managerStores.find(
-            (store: IStore) => store._id === location.state.store._id
-        ) as IStore);
+    const [store, setStore] = useState<IStore>();
+    const [loading, setLoading] = useState(true);
 
-    const products = store.products.map(product => (
-        <div className="column is-half is-4" key={product._id}>
-            <div className="card">
-                <div className="card-image">
-                    <figure className="image is-1by1 mx-3 my-3">
-                        <img src={product.imagePath} alt={product.name} />
-                    </figure>
-                </div>
-                <div className="card-content">
-                    <div className="media">
-                        <div className="media-content">
-                            <p className="title is-4">{product.name}</p>
+    useEffect(() => {
+        async function fetchData() {
+            await getStores().then(res => {
+                console.log(
+                    res.data.data.youStores.find(
+                        (store: IStore) =>
+                            store._id === location.state.store._id
+                    )
+                );
+                if (location.state.store.author._id === user()._id) {
+                    setStore(
+                        res.data.data.youStores.find(
+                            (store: IStore) =>
+                                store._id === location.state.store._id
+                        )
+                    );
+                    console.log('You Store');
+                } else {
+                    setStore(
+                        res.data.data.managerStores.find(
+                            (store: IStore) =>
+                                store._id === location.state.store._id
+                        )
+                    );
+                    console.log('You Manager Store');
+                }
+                setLoading(false);
+            });
+        }
+        if (user().isLogged) {
+            void fetchData();
+        }
+    }, []);
+
+    const products = () => {
+        if (store?.products && store?.products.length > 0) {
+            return store?.products.map(product => (
+                <div className="column is-half is-4" key={product._id}>
+                    <div className="card">
+                        <div className="card-image">
+                            <figure className="image is-1by1 mx-3 my-3">
+                                <img
+                                    src={product.imagePath}
+                                    alt={product.name}
+                                />
+                            </figure>
+                        </div>
+                        <div className="card-content">
+                            <div className="media">
+                                <div className="media-content">
+                                    <p className="title is-4">{product.name}</p>
+                                </div>
+                            </div>
+                            <div className="buttons">
+                                <Link
+                                    className="button is-info"
+                                    to={{
+                                        pathname: '/Product',
+                                        state: {
+                                            product: product,
+                                        },
+                                    }}
+                                >
+                                    Ver Producto
+                                </Link>
+                                <button
+                                    className="button is-danger"
+                                    onClick={() =>
+                                        sendDeleteProduct(product._id)
+                                    }
+                                >
+                                    Eliminar
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div className="buttons">
-                        <Link
-                            className="button is-info"
-                            to={{
-                                pathname: '/Product',
-                                state: {
-                                    product: product,
-                                },
-                            }}
-                        >
-                            Ver Producto
-                        </Link>
-                        <button
-                            className="button is-danger"
-                            onClick={() => sendDeleteProduct(product._id)}
-                        >
-                            Eliminar
-                        </button>
-                    </div>
                 </div>
-            </div>
-        </div>
-    ));
+            ));
+        }
+    };
 
     return (
         <div className="section animate__animated animate__slideInUp">
             <div className="container">
                 <div className="row columns is-multiline is-centered">
-                    {store.products.length > 0 ? products : null}
+                    {products()}
                     <div className="column is-half is-4">
                         <div className="card">
                             <div className="card-image">
@@ -103,7 +140,7 @@ export default () => {
                                     to={{
                                         pathname: '/AddProduct',
                                         state: {
-                                            storeId: store._id,
+                                            storeId: store?._id,
                                         },
                                     }}
                                 >
