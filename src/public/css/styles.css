@@ -6,20 +6,19 @@
         left: 0;
         right: 0;
         height: 190px;
-
+        pointer-events: none;
+    }
+    .navbar-menu.is-active {
+        position: absolute;
+        top: 50px;
+        width: 100%;
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
     }
 }
 
-.navbar-menu.is-active {
-    position: absolute;
-    top: 50px;
-    width: 100%;
-    opacity: 1;
-    transform: none;
-    pointer-events: auto;
-}
-
-.product-detail .content-detail {
+/* .product-detail .content-detail {
     text-align: left !important;
 }
 .product-detail .discount {
@@ -30,13 +29,17 @@
 .product-detail .price {
     font-size: 1.7em;
     text-align: left;
-}
+} */
 
 .card {
-    transition: all .5s ease;
+    transition: all 0.5s ease;
 }
 
 .card:hover {
-    transform: translate3D(0,-1px,0) scale(1.03);
-    transition: all .4s ease; 
-  }
+    transform: translate3D(0, -1px, 0) scale(1.03);
+    transition: all 0.4s ease;
+}
+
+.has-text-muted {
+    color: #95a5a6;
+}

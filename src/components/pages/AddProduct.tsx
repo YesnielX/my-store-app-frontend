@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import cogoToast from 'cogo-toast';
-import { ChangeEvent, useState } from 'react';
-import { Redirect, useHistory, useLocation } from 'react-router-dom';
+import { ChangeEvent, useRef, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import {
     createProduct,
     getStores,
     IServerResponse,
-    IStore,
     uploadImage,
 } from '../../services/api';
 
@@ -23,6 +22,8 @@ export default () => {
 
     const [categoryToAdd, setCategoryToAdd] = useState<string>('');
     const [sizeToAdd, setSizeToAdd] = useState<string>('');
+
+    const inputFile = useRef<HTMLInputElement>(null);
 
     const location: {
         pathname: string;
@@ -150,22 +151,15 @@ export default () => {
                     <div className="columns is-centered is-7-desktop">
                         <div className="column is-full-desktop is-5-tablet is-mobile content-detail">
                             <div className="has-text-centered">
-                                <div className="file my-3 is-small">
+                                <div className="file my-3 is-hidden">
                                     <label className="file-label">
                                         <input
                                             className="file-input"
                                             type="file"
                                             name="resume"
+                                            ref={inputFile}
                                             onChange={loadImage}
                                         />
-                                        <span className="file-cta">
-                                            <span className="file-icon">
-                                                <i className="fas fa-upload"></i>
-                                            </span>
-                                            <span className="file-label">
-                                                Seleccione una imagen
-                                            </span>
-                                        </span>
                                     </label>
                                 </div>
                                 <img
@@ -174,6 +168,7 @@ export default () => {
                                     style={{
                                         maxHeight: '500px',
                                     }}
+                                    onClick={() => inputFile.current?.click()}
                                 />
                             </div>
                             <br />

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import cogoToast from 'cogo-toast';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -14,7 +15,8 @@ export default () => {
         async function fetchData() {
             await getStores().then(res => {
                 setLoading(false);
-                setStores(res.data.data.youStores);
+                setStores(res.data.data.myStores);
+
                 setStoresManager(res.data.data.managerStores);
             });
         }
@@ -22,6 +24,7 @@ export default () => {
             void fetchData();
             setInterval(() => {
                 void fetchData();
+                void cogoToast.info('Tiendas Actualizadas.');
             }, 15000);
         }
     }, []);
@@ -29,7 +32,9 @@ export default () => {
     const renderStores = (type: number) => {
         const storesToRender = type === 1 ? stores : storesManager;
 
-        if (storesToRender.length) {
+        console.log('type: ', type, 'storestoRender: ', storesToRender);
+
+        if (storesToRender !== []) {
             return storesToRender.map(store => {
                 return (
                     <div className="column is-3" key={store.name}>
@@ -42,6 +47,7 @@ export default () => {
                             <div className="card-image mx-3">
                                 <figure className="image is-1by1">
                                     <img
+                                        className="mt-3"
                                         src={store.imagePath}
                                         alt="store image"
                                     />
@@ -71,7 +77,7 @@ export default () => {
                     </div>
                 );
             });
-        } else if (!storesToRender.length && storesToRender === storesManager) {
+        } else if (storesToRender.length <= 0 && type === 2) {
             return (
                 <div className="column is-4">
                     <img src="/images/empty.svg" alt="empty" />

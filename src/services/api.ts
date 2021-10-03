@@ -32,13 +32,21 @@ axiosApiInstance.interceptors.response.use(
                 case 403:
                 case 404:
                 case 500:
-                    void cogoToast.error(
-                        `Error: ${error.response.data.error as string}`
-                    );
+                    {
+                        void cogoToast.error(
+                            `Error: ${error.response.data.error as string}`,
+                            {
+                                hideAfter: 5,
+                            }
+                        );
+                    }
                     break;
                 default:
                     void cogoToast.error(
-                        `Error: ${error.response.data.error as string}`
+                        `Error: ${error.response.data.error as string}`,
+                        {
+                            hideAfter: 5,
+                        }
                     );
                     break;
             }
@@ -76,6 +84,8 @@ export type IProduct = {
     solds: number;
     imagePath: string;
     author: string;
+    createdAt: Date;
+    updatedAt: Date;
 };
 
 export type IStore = {
@@ -83,8 +93,8 @@ export type IStore = {
     name: string;
     imagePath: string;
     products: IProduct[];
-    managers: string[];
-    employees: string[];
+    managers: IUser[];
+    employees: IUser[];
     author: IUser;
 };
 
@@ -147,6 +157,18 @@ export const createStore = async (name: string, imagePath: string) => {
     });
 };
 
+export const updateStore = async (
+    storeId: string,
+    name: string,
+    imagePath: string
+) => {
+    return await axiosApiInstance.put(`${SERVER_HOST}/stores`, {
+        storeId,
+        name,
+        imagePath,
+    });
+};
+
 export const createProduct = async (
     storeId: string,
     name: string,
@@ -175,6 +197,38 @@ export const deleteProduct = async (productId: string) => {
     return await axiosApiInstance.delete(`${SERVER_HOST}/stores/products/`, {
         data: {
             productId,
+        },
+    });
+};
+
+export const addManager = async (storeId: string, userEmail: string) => {
+    return await axiosApiInstance.put(`${SERVER_HOST}/store/managers`, {
+        storeId,
+        userEmail,
+    });
+};
+
+export const deleteManager = async (storeId: string, userId: string) => {
+    return await axiosApiInstance.delete(`${SERVER_HOST}/store/managers`, {
+        data: {
+            storeId,
+            userId,
+        },
+    });
+};
+
+export const addEmployee = async (storeId: string, userEmail: string) => {
+    return await axiosApiInstance.put(`${SERVER_HOST}/store/employees`, {
+        storeId,
+        userEmail,
+    });
+};
+
+export const deleteEmployee = async (storeId: string, userId: string) => {
+    return await axiosApiInstance.delete(`${SERVER_HOST}/store/employees`, {
+        data: {
+            storeId,
+            userId,
         },
     });
 };

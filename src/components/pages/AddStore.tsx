@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import cogoToast from 'cogo-toast';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
 import {
     createStore,
@@ -12,6 +12,8 @@ import {
 export default () => {
     const [image, setImage] = useState('');
     const [name, setName] = useState('');
+
+    const inputFile = useRef<HTMLInputElement>(null);
 
     const loadImage = (e: ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) {
@@ -56,18 +58,15 @@ export default () => {
         }
 
         void cogoToast.loading('Creando Tienda...').then(() => {
-            void createStore(name, image)
-                .then(res => {
-                    console.log(res);
+            void createStore(name, image).then(res => {
+                console.log(res);
 
+                if (res.status === 201) {
                     void cogoToast.success('Tienda Creada!.');
                     void getStores();
                     window.location.href = '/';
-                })
-                .catch(err => {
-                    console.log(err);
-                    void cogoToast.error(err.response.data.error);
-                });
+                }
+            });
         });
     };
 
@@ -87,22 +86,15 @@ export default () => {
                     }}
                 >
                     <br />
-                    <div className="file my-3">
+                    <div className="file is-hidden">
                         <label className="file-label">
                             <input
                                 className="file-input"
                                 type="file"
                                 name="resume"
+                                ref={inputFile}
                                 onChange={loadImage}
                             />
-                            <span className="file-cta">
-                                <span className="file-icon">
-                                    <i className="fas fa-upload"></i>
-                                </span>
-                                <span className="file-label">
-                                    Seleccione una imagen
-                                </span>
-                            </span>
                         </label>
                     </div>
                     <div className="columns">
@@ -114,6 +106,9 @@ export default () => {
                                     id="image"
                                     style={{
                                         maxHeight: '500px',
+                                    }}
+                                    onClick={() => {
+                                        inputFile.current?.click();
                                     }}
                                 />
                             </figure>
