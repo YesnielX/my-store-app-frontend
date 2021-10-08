@@ -25,13 +25,13 @@ export default () => {
         const form = new FormData();
         form.append('image', file, file.name);
         console.log(form);
-        void cogoToast.loading('Uploading Image...').then(() => {
+        void cogoToast.loading('Subiendo Imagen...').then(() => {
             void uploadImage(form).then(req => {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-                void req.json().then((res: IServerResponse) => {
+                void req.json().then(res => {
                     console.log('response', res);
                     if (req.status === 201) {
-                        void cogoToast.success(res.message);
+                        void cogoToast.success('Imagen Subida Con Exito!');
                         setImage(res.data);
                     } else if (req.status) {
                         void cogoToast.error(

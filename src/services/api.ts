@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import cogoToast from 'cogo-toast';
 
 const SERVER_HOST = import.meta.env.VITE_SERVER_HOST;
@@ -25,7 +25,7 @@ axiosApiInstance.interceptors.response.use(
         }
         return response;
     },
-    error => {
+    (error: AxiosError) => {
         if (error.response) {
             switch (error.response.status) {
                 case 401:
@@ -51,7 +51,6 @@ axiosApiInstance.interceptors.response.use(
                     break;
             }
         }
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return error;
     }
 );
@@ -59,13 +58,23 @@ axiosApiInstance.interceptors.response.use(
 export type IServerResponse = {
     message: string;
     error: string;
-    data: any;
+    data: {
+        myStores: IStore[];
+        managerStores: IStore[];
+        employeesStores: IStore[];
+    };
 };
 
 type IUser = {
     _id: string;
     username: string;
     email: string;
+    roles: [
+        {
+            name: string;
+            description: string;
+        }
+    ];
     isAdmin: boolean;
     isPrincipalAdmin: boolean;
     isLogged: boolean;
@@ -96,6 +105,20 @@ export type IStore = {
     managers: IUser[];
     employees: IUser[];
     author: IUser;
+    createdAt: Date;
+    updatedAt: Date;
+};
+
+export type IReport = {
+    _id: string;
+    store: string;
+    product: string;
+    title: string;
+    description: string;
+    imagePath: string;
+    author: IUser;
+    createdAt: Date;
+    updatedAt: Date;
 };
 
 export const login = async (email: string, password: string) => {
@@ -142,12 +165,7 @@ export const uploadImage = async (image: FormData) => {
 };
 
 export const getStores = async () => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    return await axiosApiInstance.get(`${SERVER_HOST}/stores`).then(res => {
-        localStorage.setItem('myStores', JSON.stringify(res.data.data || '[]'));
-        return res;
-    });
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return await axiosApiInstance.get(`${SERVER_HOST}/stores`);
 };
 
 export const createStore = async (name: string, imagePath: string) => {
@@ -193,10 +211,73 @@ export const createProduct = async (
     });
 };
 
+export const editProduct = async (
+    productId: string,
+    name: string,
+    description: string,
+    price: number,
+    purchasePrice: number,
+    stock: number,
+    categories: string[],
+    sizes: string[],
+    imagePath: string
+) => {
+    return await axiosApiInstance.put(`${SERVER_HOST}/stores/products`, {
+        productId,
+        name,
+        description,
+        price,
+        purchasePrice,
+        stock,
+        categories,
+        sizes,
+        imagePath,
+    });
+};
+
 export const deleteProduct = async (productId: string) => {
     return await axiosApiInstance.delete(`${SERVER_HOST}/stores/products/`, {
         data: {
             productId,
+        },
+    });
+};
+
+export const soldProduct = async (storeId: string, productId: string) => {
+    return await axiosApiInstance.post(`${SERVER_HOST}/store/product`, {
+        storeId,
+        productId,
+    });
+};
+
+export const createReport = async (
+    storeId: string,
+    productId: string,
+    title: string,
+    description: string,
+    imagePath: string
+) => {
+    return await axiosApiInstance.post(`${SERVER_HOST}/store/reports`, {
+        storeId,
+        productId,
+        title,
+        description,
+        imagePath,
+    });
+};
+
+export const getReports = async (storeId: string) => {
+    return await axiosApiInstance.get(`${SERVER_HOST}/store/reports`, {
+        params: {
+            storeId,
+        },
+    });
+};
+
+export const deleteReport = async (reportId: string) => {
+    return await axiosApiInstance.delete(`${SERVER_HOST}/store/reports/`, {
+        data: {
+            reportId,
         },
     });
 };

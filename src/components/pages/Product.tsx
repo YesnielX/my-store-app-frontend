@@ -1,7 +1,19 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import cogoToast from 'cogo-toast';
-import { Redirect, useHistory, useLocation } from 'react-router-dom';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { Link, Redirect, useHistory, useLocation } from 'react-router-dom';
+import Popup from 'reactjs-popup';
 
-import { IProduct, IStore } from '../../services/api';
+import {
+    createReport,
+    deleteProduct,
+    getStores,
+    IProduct,
+    IStore,
+    soldProduct,
+    uploadImage,
+    user,
+} from '../../services/api';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default () => {
@@ -15,153 +27,114 @@ export default () => {
 
     const history = useHistory();
 
-    if (location.state === undefined || location.state.product === undefined) {
+    if (
+        location.state === undefined ||
+        location.state.store === undefined ||
+        location.state.product === undefined
+    ) {
         return <Redirect to="/" />;
     }
 
-    const product: IProduct = location.state.product;
+    const [product, setProduct] = useState<IProduct>(location.state.product);
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [image, setImage] = useState(product.imagePath);
+    const [loading, setLoading] = useState(true);
 
-    const makeReport = () => {
-        void cogoToast.error('Reporte No Disponible');
+    const inputFile = useRef<HTMLInputElement>(null);
+
+    const loadImage = (e: ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files) {
+            return;
+        }
+
+        const file = e.target.files[0];
+        const form = new FormData();
+        form.append('image', file, file.name);
+        void cogoToast.loading('Subiendo Imagen...').then(() => {
+            void uploadImage(form).then((req: Response) => {
+                void req.json().then(res => {
+                    if (req.status === 201) {
+                        void cogoToast.success('Imagen Subida Con Exito!');
+                        setImage(res.data as string);
+                    } else if (req.status) {
+                        void cogoToast.error(
+                            <div>
+                                <b>Oops!</b>
+                                <div>Error al subir la imagen: {res.error}</div>
+                            </div>
+                        );
+                    }
+                });
+            });
+        });
     };
 
-    const makeSold = () => {
-        void cogoToast.success('Producto Vendido');
+    const sendCreateReport = () => {
+        if (!title || !description) {
+            void cogoToast.error('Complete Todos Los Campos.');
+            return;
+        }
+
+        void cogoToast
+            .loading('Enviando Reporte....', {
+                hideAfter: 2,
+            })
+            .then(() => {
+                void createReport(
+                    location.state.store._id,
+                    product._id,
+                    title,
+                    description,
+                    image
+                ).then(res => {
+                    if (res.status === 201) {
+                        void cogoToast.success('Reporte enviado con exito!');
+                    }
+                });
+            });
     };
+
+    const sendDeleteProduct = (id: string) => {
+        void deleteProduct(id).then(res => {
+            if (res.status === 200) {
+                void cogoToast.success('Producto Eliminado.');
+                void fetchData();
+            }
+        });
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    async function fetchData() {
+        await getStores().then(res => {
+            if (res.status === 200) {
+                if (location.state.store.author._id === user()._id) {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                    (res.data?.data?.myStores as IStore[]).find(
+                        (store: IStore) => {
+                            if (store._id === location.state.store._id) {
+                                setProduct(
+                                    store.products.find(
+                                        (product: IProduct) =>
+                                            product._id ===
+                                            location.state.product._id
+                                    ) as IProduct
+                                );
+                                void cogoToast.success('Producto Actualizado');
+                            }
+                        }
+                    );
+                }
+            }
+        });
+    }
+
+    useEffect(() => {
+        setLoading(false);
+        void fetchData();
+    }, []);
 
     const productRender = (
-        <div key={product._id}>
-            <div
-                className=" product-detail box"
-                style={{
-                    margin: 3,
-                }}
-            >
-                <br />
-                <div className=" is-centered is-7-desktop">
-                    <div className=" is-full-desktop is-5-tablet is-mobile content-detail">
-                        <div className="has-text-centered">
-                            <img
-                                src={product.imagePath}
-                                alt="image"
-                                style={{
-                                    maxHeight: '500px',
-                                }}
-                            />
-                        </div>
-                        <div>
-                            <dt
-                                style={{
-                                    fontSize: '1.7em',
-                                    textTransform: 'uppercase',
-                                }}
-                            >
-                                {product.name}
-                            </dt>
-                            <hr />
-                            <dt
-                                style={{
-                                    fontSize: '1.2em',
-                                    textTransform: 'uppercase',
-                                }}
-                            >
-                                <p>Categorias: </p>
-                                {product.categories.map((category, index) => (
-                                    <span
-                                        className="tag ml-1 is-primary"
-                                        key={index}
-                                    >
-                                        {category}
-                                    </span>
-                                ))}
-                            </dt>
-                            <hr />
-                            <dt
-                                style={{
-                                    fontSize: '1.2em',
-                                    textTransform: 'uppercase',
-                                }}
-                            >
-                                <p>Tamaños: </p>
-                                {product.sizes.map((category, index) => (
-                                    <span
-                                        className="tag ml-1 is-primary"
-                                        key={index}
-                                    >
-                                        {category}
-                                    </span>
-                                ))}
-                            </dt>
-                            <hr />
-                            <p
-                                style={{
-                                    fontSize: '1.2em',
-                                    textTransform: 'uppercase',
-                                }}
-                            >
-                                {product.description}
-                            </p>
-                            <hr />
-                            <div className="price">
-                                <label
-                                    className="tag is-success is-rounded"
-                                    htmlFor="price"
-                                >
-                                    USD <span>{product.price}</span>
-                                </label>
-                                <br />
-                            </div>
-
-                            <div className="price">
-                                <label
-                                    className="tag is-success is-rounded"
-                                    htmlFor="price"
-                                >
-                                    USD <span>{product.price}</span>
-                                </label>
-                                <br />
-                                <br />
-                            </div>
-
-                            <div>
-                                Disponibles &nbsp;
-                                <label className="tag is-primary is-rounded">
-                                    <span>{product.stock}</span>
-                                </label>
-                                <br />
-                            </div>
-
-                            <div>
-                                Vendidos &nbsp;
-                                <label className="tag is-danger is-rounded">
-                                    <span>{product.solds}</span>
-                                </label>
-                                <br />
-                                <br />
-                            </div>
-
-                            <hr />
-                            <button
-                                className="button is-full is-danger mx-1 my-1"
-                                onClick={makeReport}
-                            >
-                                Reportar producto
-                            </button>
-                            <button
-                                className="button is-full is-primary mx-1 my-1"
-                                onClick={makeSold}
-                            >
-                                Marcar Como Vendido
-                            </button>
-                            <div className="column is-hidden-desktop is-1-tablet is-hidden-mobile"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-
-    const productR = (
         <div key={product._id}>
             <div>
                 <div className="product-header">
@@ -206,7 +179,10 @@ export default () => {
                             <br />
                             <p>{product.description}</p>
                             <br />
-                            <table className="table panel-tabs">
+                            <table
+                                className="table panel-tabs is-family-code"
+                                id="details"
+                            >
                                 <tbody>
                                     <tr>
                                         <td className="has-text-right">
@@ -250,7 +226,7 @@ export default () => {
                                     </tr>
                                     <tr>
                                         <td className="has-text-right">
-                                            <strong>Creado</strong>
+                                            <strong>Creacion</strong>
                                         </td>
                                         <td>
                                             {new Date(
@@ -260,7 +236,7 @@ export default () => {
                                     </tr>
                                     <tr>
                                         <td className="has-text-right">
-                                            <strong>Actualizado</strong>
+                                            <strong>Actualizacion</strong>
                                         </td>
                                         <td>
                                             {new Date(
@@ -283,12 +259,154 @@ export default () => {
                                 </tbody>
                             </table>
 
-                            <p className="buttons">
-                                <a className="button is-primary">
+                            <div className="buttons">
+                                {!location.state.store?.employees.find(
+                                    e => e._id === user()._id
+                                ) && (
+                                    <button
+                                        className="button is-danger"
+                                        onClick={() =>
+                                            sendDeleteProduct(product._id)
+                                        }
+                                    >
+                                        Eliminar
+                                    </button>
+                                )}
+
+                                <Popup
+                                    trigger={
+                                        <button className="button is-danger">
+                                            Reportar
+                                        </button>
+                                    }
+                                >
+                                    {(close: () => void) => (
+                                        <div className="modal is-active animate__animated animate__fadeIn">
+                                            <div className="modal-background"></div>
+                                            <div className="modal-card p-2">
+                                                <header className="modal-card-head">
+                                                    <p className="modal-card-title">
+                                                        Nuevo Reporte
+                                                    </p>
+                                                    <button
+                                                        className="delete"
+                                                        aria-label="close"
+                                                        onClick={() => close()}
+                                                    ></button>
+                                                </header>
+                                                <section className="modal-card-body">
+                                                    <div className="file is-hidden">
+                                                        <label className="file-label">
+                                                            <input
+                                                                className="file-input"
+                                                                type="file"
+                                                                name="resume"
+                                                                ref={inputFile}
+                                                                onChange={
+                                                                    loadImage
+                                                                }
+                                                            />
+                                                        </label>
+                                                    </div>
+                                                    <figure>
+                                                        <img
+                                                            src={image}
+                                                            alt="store image"
+                                                            className="image my-2 mx-auto"
+                                                            onClick={() =>
+                                                                inputFile.current?.click()
+                                                            }
+                                                        />
+                                                    </figure>
+                                                    <div className="field">
+                                                        <label className="label">
+                                                            Titulo
+                                                        </label>
+                                                        <div className="control">
+                                                            <input
+                                                                className="input"
+                                                                type="text"
+                                                                placeholder="Titulo"
+                                                                onChange={e =>
+                                                                    setTitle(
+                                                                        e.target
+                                                                            .value
+                                                                    )
+                                                                }
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className="field">
+                                                        <label className="label">
+                                                            Descripcion
+                                                        </label>
+                                                        <div className="control">
+                                                            <textarea
+                                                                className="textarea"
+                                                                placeholder="Descripcion"
+                                                                onChange={e =>
+                                                                    setDescription(
+                                                                        e.target
+                                                                            .value
+                                                                    )
+                                                                }
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </section>
+                                                <footer className="modal-card-foot">
+                                                    <button
+                                                        className="button is-success"
+                                                        onClick={() => {
+                                                            sendCreateReport();
+                                                            close();
+                                                        }}
+                                                    >
+                                                        Enviar
+                                                    </button>
+                                                    <button
+                                                        className="button"
+                                                        onClick={() => close()}
+                                                    >
+                                                        Cerrar
+                                                    </button>
+                                                </footer>
+                                            </div>
+                                        </div>
+                                    )}
+                                </Popup>
+                                <button
+                                    className="button is-primary"
+                                    onClick={() => {
+                                        void soldProduct(
+                                            location.state.store._id,
+                                            product._id
+                                        ).then(res => {
+                                            if (res.status === 200) {
+                                                void cogoToast.success(
+                                                    'Producto marcado como vendido.'
+                                                );
+                                                void fetchData();
+                                            }
+                                        });
+                                    }}
+                                >
                                     Marcar como vendido
-                                </a>
-                                <a className="button is-danger">Reportar</a>
-                            </p>
+                                </button>
+
+                                <Link
+                                    className="button is-primary"
+                                    to={{
+                                        pathname: '/EditProduct',
+                                        state: {
+                                            store: location.state.store,
+                                            product,
+                                        },
+                                    }}
+                                >
+                                    Editar
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -299,7 +417,18 @@ export default () => {
     return (
         <div className="section animate__animated animate__slideInUp">
             <div className="container">
-                <div className="">{productR}</div>
+                <div className="">
+                    {loading ? (
+                        <progress
+                            className="progress is-small is-primary"
+                            max="100"
+                        >
+                            15%
+                        </progress>
+                    ) : (
+                        productRender
+                    )}
+                </div>
             </div>
         </div>
     );

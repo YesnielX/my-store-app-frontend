@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import cogoToast from 'cogo-toast';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -14,17 +13,18 @@ export default () => {
     useEffect(() => {
         async function fetchData() {
             await getStores().then(res => {
-                setLoading(false);
-                setStores(res.data.data.myStores);
+                if (res.status === 200) {
+                    setLoading(false);
+                    setStores(res.data.data.myStores);
 
-                setStoresManager(res.data.data.managerStores);
+                    setStoresManager(res.data.data.managerStores);
+                }
             });
         }
         if (user().isLogged) {
             void fetchData();
             setInterval(() => {
                 void fetchData();
-                void cogoToast.info('Tiendas Actualizadas.');
             }, 15000);
         }
     }, []);
@@ -32,22 +32,24 @@ export default () => {
     const renderStores = (type: number) => {
         const storesToRender = type === 1 ? stores : storesManager;
 
-        console.log('type: ', type, 'storestoRender: ', storesToRender);
-
-        if (storesToRender !== []) {
+        if (storesToRender.length !== 0) {
             return storesToRender.map(store => {
                 return (
-                    <div className="column is-3" key={store.name}>
-                        <div
-                            className="card"
-                            style={{
-                                minHeight: '300px',
-                            }}
-                        >
-                            <div className="card-image mx-3">
-                                <figure className="image is-1by1">
+                    <Link
+                        className="column is-3"
+                        id="store"
+                        key={store.name}
+                        to={{
+                            pathname: '/Store',
+                            state: {
+                                store: store,
+                            },
+                        }}
+                    >
+                        <div className="card">
+                            <div className="card-image">
+                                <figure className="image">
                                     <img
-                                        className="mt-3"
                                         src={store.imagePath}
                                         alt="store image"
                                     />
@@ -61,23 +63,12 @@ export default () => {
                                         </p>
                                     </div>
                                 </div>
-                                <Link
-                                    className="button is-info"
-                                    to={{
-                                        pathname: '/Store',
-                                        state: {
-                                            store: store,
-                                        },
-                                    }}
-                                >
-                                    Ver Tienda
-                                </Link>
                             </div>
                         </div>
-                    </div>
+                    </Link>
                 );
             });
-        } else if (storesToRender.length <= 0 && type === 2) {
+        } else if (storesToRender.length === 0 && type === 2) {
             return (
                 <div className="column is-4">
                     <img src="/images/empty.svg" alt="empty" />
@@ -89,8 +80,8 @@ export default () => {
     return (
         <div className="section has-text-centered justify-content animate__animated animate__slideInUp">
             {user().isLogged ? (
-                <div>
-                    <div className="section">
+                <div className="section">
+                    <div>
                         <h1 className="title">Mis Tiendas</h1>
                         <hr />
                         <div className="row columns is-multiline is-centered">
@@ -102,34 +93,35 @@ export default () => {
                                 >
                                     15%
                                 </progress>
-                            ) : null}
-                            <div className="column is-3">
-                                <div
-                                    className="card"
-                                    style={{
-                                        minHeight: '300px',
-                                    }}
-                                >
-                                    <div className="card-image">
-                                        <figure className="image is-1by1 mx-3 my-3">
-                                            <img
-                                                src="/images/createStore.svg"
-                                                alt="store image"
-                                            />
-                                        </figure>
-                                    </div>
-                                    <div className="card-content">
-                                        <Link
-                                            className="button is-info"
-                                            to={{
-                                                pathname: '/AddStore',
-                                            }}
-                                        >
-                                            Crear Tienda
-                                        </Link>
+                            ) : (
+                                <div className="column is-3">
+                                    <div
+                                        className="card"
+                                        style={{
+                                            minHeight: '100%',
+                                        }}
+                                    >
+                                        <div className="card-image">
+                                            <figure className="image is-1by1 mx-3 my-3">
+                                                <img
+                                                    src="/images/createStore.svg"
+                                                    alt="store image"
+                                                />
+                                            </figure>
+                                        </div>
+                                        <div className="card-content">
+                                            <Link
+                                                className="button is-info"
+                                                to={{
+                                                    pathname: '/AddStore',
+                                                }}
+                                            >
+                                                Crear Tienda
+                                            </Link>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     </div>
                     <div className="section ">

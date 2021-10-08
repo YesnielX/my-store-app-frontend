@@ -43,6 +43,17 @@ export default () => {
                         </div>
                     </div>
 
+                    <div className="field mx-auto mt-5">
+                        <div className="control">
+                            <label className="label level-left">Roles</label>
+                            {user().roles.map(r => (
+                                <span className="tag is-success" key={r.name}>
+                                    {r.name}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+
                     <button className="button is-primary is-medium is-fullwidth my-5">
                         Save
                     </button>

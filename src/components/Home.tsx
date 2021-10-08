@@ -1,7 +1,11 @@
-import { Suspense, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { ComponentType, Suspense, useEffect } from 'react';
+import {
+    BrowserRouter as Router,
+    Redirect,
+    Route,
+    Switch,
+} from 'react-router-dom';
 
-import { getStores, user } from '../services/api';
 import Header from './Header';
 import Stores from './Stores';
 
@@ -12,14 +16,12 @@ function loadRoutes() {
     const views = Object.keys(context);
     for (const key of views) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const view = context[key].default;
+        const view: ComponentType = context[key].default;
         const name = key.replace(/(\.\/pages\/|\.tsx)/g, '');
         routes.push(
             (
                 <Route
-                    exact
                     path={'/' + name}
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                     component={view}
                     key={'router-' + name}
                 ></Route>
@@ -30,13 +32,46 @@ function loadRoutes() {
 }
 
 export default () => {
+    useEffect(() => {
+        window.onresize = () => {
+            const details = document.getElementById('details');
+            if (window.innerWidth < 850) {
+                details?.classList.add('is-fullwidth');
+                details?.classList.remove('panel-tabs');
+            } else {
+                details?.classList.remove('is-fullwidth');
+                details?.classList.add('panel-tabs');
+            }
+        };
+    }, []);
     return (
-        <Suspense fallback={<>Loading...</>}>
+        <Suspense
+            fallback={
+                <div
+                    className="section"
+                    style={{
+                        marginTop: '10px',
+                    }}
+                >
+                    <progress
+                        className="progress is-small is-primary"
+                        max="100"
+                    >
+                        15%
+                    </progress>
+                </div>
+            }
+        >
             <div className="my-3 animate__animated animate__fadeIn" id="main">
                 <Router>
                     <Header />
                     <div className="container">
-                        <Switch>{loadRoutes()}</Switch>
+                        <Switch>
+                            {loadRoutes()}
+                            <Route exact path="*">
+                                <Redirect to="/"></Redirect>
+                            </Route>
+                        </Switch>
                     </div>
                     <Route exact path="/" component={Stores}></Route>
                 </Router>

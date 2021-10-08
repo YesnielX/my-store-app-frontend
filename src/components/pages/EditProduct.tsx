@@ -3,36 +3,34 @@ import cogoToast from 'cogo-toast';
 import { ChangeEvent, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import {
-    createProduct,
-    getStores,
-    IServerResponse,
-    uploadImage,
-} from '../../services/api';
+import { editProduct, IProduct, IStore, uploadImage } from '../../services/api';
 
 export default () => {
-    const [image, setImage] = useState('/images/empty.svg');
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [categories, setCategories] = useState<string[]>([]);
-    const [sizes, setSizes] = useState<string[]>([]);
-    const [price, setPrice] = useState(0);
-    const [purchasePrice, setPurchasePrice] = useState(0);
-    const [stocks, setStocks] = useState(0);
+    const location: {
+        pathname: string;
+        state: {
+            store: IStore;
+            product: IProduct;
+        };
+    } = useLocation();
+
+    const history = useHistory();
+
+    const store = location.state.store;
+    const product = location.state.product;
+    const [image, setImage] = useState(product.imagePath);
+    const [name, setName] = useState(store.name);
+    const [description, setDescription] = useState(product.description);
+    const [categories, setCategories] = useState<string[]>(product.categories);
+    const [sizes, setSizes] = useState<string[]>(product.sizes);
+    const [price, setPrice] = useState(product.price);
+    const [purchasePrice, setPurchasePrice] = useState(product.purchasePrice);
+    const [stocks, setStocks] = useState(product.stock);
 
     const [categoryToAdd, setCategoryToAdd] = useState<string>('');
     const [sizeToAdd, setSizeToAdd] = useState<string>('');
 
     const inputFile = useRef<HTMLInputElement>(null);
-
-    const location: {
-        pathname: string;
-        state: {
-            storeId: string;
-        };
-    } = useLocation();
-
-    const history = useHistory();
 
     const loadImage = (e: ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) {
@@ -98,7 +96,7 @@ export default () => {
         }
     };
 
-    const sendCreateProduct = () => {
+    const sendEditProduct = () => {
         if (
             !image.length ||
             image === '/images/empty.svg' ||
@@ -114,9 +112,9 @@ export default () => {
             return;
         }
 
-        void cogoToast.loading('Creando Producto...').then(() => {
-            void createProduct(
-                location.state.storeId,
+        void cogoToast.loading('Editando Producto...').then(() => {
+            void editProduct(
+                location.state.product._id,
                 name,
                 description,
                 price,
@@ -127,14 +125,11 @@ export default () => {
                 image
             ).then(req => {
                 if (req.status === 201) {
-                    void cogoToast.success('Producto creado con exito.');
+                    void cogoToast.success('Producto editado con exito.');
+                    history.goBack();
                 }
             });
         });
-
-        void getStores();
-
-        history.goBack();
     };
 
     return (
@@ -180,6 +175,7 @@ export default () => {
                                     <input
                                         className="input"
                                         type="text"
+                                        defaultValue={name}
                                         placeholder="Nombre"
                                         onChange={e => setName(e.target.value)}
                                     />
@@ -282,6 +278,7 @@ export default () => {
                                 <div className="control has-icons-left">
                                     <textarea
                                         className="textarea is-primary"
+                                        defaultValue={description}
                                         placeholder="Descripcion"
                                         onChange={e =>
                                             setDescription(e.target.value)
@@ -295,6 +292,7 @@ export default () => {
                                     <input
                                         className="input"
                                         type="number"
+                                        defaultValue={price}
                                         placeholder="Precio"
                                         onChange={e =>
                                             setPrice(Number(e.target.value))
@@ -311,6 +309,7 @@ export default () => {
                                     <input
                                         className="input"
                                         type="number"
+                                        defaultValue={purchasePrice}
                                         placeholder="Precio de compra"
                                         onChange={e =>
                                             setPurchasePrice(
@@ -329,6 +328,7 @@ export default () => {
                                     <input
                                         className="input"
                                         type="number"
+                                        defaultValue={stocks}
                                         placeholder="Disponibles"
                                         onChange={e =>
                                             setStocks(Number(e.target.value))
@@ -349,9 +349,9 @@ export default () => {
                             </button>
                             <button
                                 className="button is-full is-primary mx-1 my-1"
-                                onClick={sendCreateProduct}
+                                onClick={sendEditProduct}
                             >
-                                Agregar
+                                Editar
                             </button>
                             <div className="column is-hidden-desktop is-1-tablet is-hidden-mobile"></div>
                         </div>
