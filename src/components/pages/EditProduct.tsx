@@ -16,10 +16,9 @@ export default () => {
 
     const history = useHistory();
 
-    const store = location.state.store;
     const product = location.state.product;
     const [image, setImage] = useState(product.imagePath);
-    const [name, setName] = useState(store.name);
+    const [name, setName] = useState(product.name);
     const [description, setDescription] = useState(product.description);
     const [categories, setCategories] = useState<string[]>(product.categories);
     const [sizes, setSizes] = useState<string[]>(product.sizes);
