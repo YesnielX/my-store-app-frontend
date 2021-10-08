@@ -1,20 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import cogoToast from 'cogo-toast';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { Link, Redirect, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Redirect, useLocation } from 'react-router-dom';
 
 import {
-    addEmployee,
-    addManager,
-    deleteEmployee,
-    deleteManager,
     getReports,
     getStores,
     IReport,
     IStore,
-    updateStore,
-    uploadImage,
     user,
 } from '../../services/api';
 import Products from '../Products';
@@ -75,11 +69,14 @@ export default () => {
                         console.log('You Employee Store');
                     }
 
-                    await getReports(location.state.store._id).then(res => {
-                        if (res.status === 200) {
-                            setReports(res.data.data);
-                        }
-                    });
+                    if (store?.employees.find(e => e._id !== user()._id)) {
+                        console.log('Get Reports');
+                        await getReports(location.state.store._id).then(res => {
+                            if (res.status === 200) {
+                                setReports(res.data.data);
+                            }
+                        });
+                    }
                 }
             })
             .then(() => {
@@ -106,7 +103,10 @@ export default () => {
             return <Products store={store as IStore} />;
         } else if (tabActived === 2) {
             return <Settings store={store as IStore} />;
-        } else if (tabActived === 3) {
+        } else if (
+            tabActived === 3 &&
+            !store?.employees.find(e => e._id === user()._id)
+        ) {
             return (
                 <Reports
                     store={store as IStore}

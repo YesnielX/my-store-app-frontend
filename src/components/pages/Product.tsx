@@ -394,18 +394,22 @@ export default () => {
                                     Marcar como vendido
                                 </button>
 
-                                <Link
-                                    className="button is-primary"
-                                    to={{
-                                        pathname: '/EditProduct',
-                                        state: {
-                                            store: location.state.store,
-                                            product,
-                                        },
-                                    }}
-                                >
-                                    Editar
-                                </Link>
+                                {!location.state.store?.employees.find(
+                                    e => e._id === user()._id
+                                ) && (
+                                    <Link
+                                        className="button is-primary"
+                                        to={{
+                                            pathname: '/EditProduct',
+                                            state: {
+                                                store: location.state.store,
+                                                product,
+                                            },
+                                        }}
+                                    >
+                                        Editar
+                                    </Link>
+                                )}
                             </div>
                         </div>
                     </div>

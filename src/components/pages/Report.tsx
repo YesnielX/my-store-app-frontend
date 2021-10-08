@@ -104,10 +104,7 @@ export default () => {
                             <br />
                             <p>{report.description}</p>
                             <br />
-                            <table
-                                className="table panel-tabs is-family-code"
-                                id="details"
-                            >
+                            <table className="table panel-tabs is-family-code">
                                 <tbody>
                                     <tr>
                                         <td className="has-text-right">
