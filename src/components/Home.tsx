@@ -33,6 +33,15 @@ function loadRoutes() {
 
 export default () => {
     useEffect(() => {
+        const details = document.getElementById('details');
+        if (window.innerWidth < 850) {
+            details?.classList.add('is-fullwidth');
+            details?.classList.remove('panel-tabs');
+        } else {
+            details?.classList.remove('is-fullwidth');
+            details?.classList.add('panel-tabs');
+        }
+
         window.onresize = () => {
             const details = document.getElementById('details');
             if (window.innerWidth < 850) {

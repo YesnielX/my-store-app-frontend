@@ -69,7 +69,7 @@ export default () => {
                         console.log('You Employee Store');
                     }
 
-                    if (store?.employees.find(e => e._id !== user()._id)) {
+                    if (!store?.employees.find(e => e._id === user()._id)) {
                         console.log('Get Reports');
                         await getReports(location.state.store._id).then(res => {
                             if (res.status === 200) {

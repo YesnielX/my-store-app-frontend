@@ -198,7 +198,7 @@ export default () => {
                                             {product.categories.map(
                                                 (category, index) => (
                                                     <span
-                                                        className="tag ml-1 is-primary"
+                                                        className="tag ml-1 is-primary mt-2"
                                                         key={index}
                                                     >
                                                         {category}
@@ -215,7 +215,7 @@ export default () => {
                                             {product.sizes.map(
                                                 (size, index) => (
                                                     <span
-                                                        className="tag ml-1 is-primary"
+                                                        className="tag ml-1 is-primary mt-2"
                                                         key={index}
                                                     >
                                                         {size}
