@@ -12,6 +12,7 @@
         position: absolute;
         top: 50px;
         width: 100%;
+        height: 230px;
         opacity: 1;
         transform: none;
         pointer-events: auto;

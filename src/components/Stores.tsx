@@ -22,6 +22,7 @@ export default () => {
             });
         }
         if (user().isLogged) {
+            console.log('user is logged');
             void fetchData();
             setInterval(() => {
                 void fetchData();
@@ -32,7 +33,7 @@ export default () => {
     const renderStores = (type: number) => {
         const storesToRender = type === 1 ? stores : storesManager;
 
-        if (storesToRender.length !== 0) {
+        if (storesToRender && storesToRender.length !== 0) {
             return storesToRender.map(store => {
                 return (
                     <Link
@@ -68,7 +69,7 @@ export default () => {
                     </Link>
                 );
             });
-        } else if (storesToRender.length === 0 && type === 2) {
+        } else if (!storesToRender && type === 2) {
             return (
                 <div className="column is-4">
                     <img src="/images/empty.svg" alt="empty" />

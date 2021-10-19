@@ -6,6 +6,7 @@ import {
     Switch,
 } from 'react-router-dom';
 
+import { getMe, user } from '../services/api';
 import Header from './Header';
 import Stores from './Stores';
 
@@ -52,6 +53,11 @@ export default () => {
                 details?.classList.add('panel-tabs');
             }
         };
+
+        // get user data
+        if (user().isLogged) {
+            void getMe();
+        }
     }, []);
     return (
         <Suspense

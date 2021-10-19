@@ -21,7 +21,7 @@ axiosApiInstance.interceptors.response.use(
             (response.status === 201 &&
                 !response.config.url?.endsWith('stores'))
         ) {
-            void cogoToast.success('Exito!');
+            // void cogoToast.success('Exito!');
         }
         return response;
     },
@@ -65,16 +65,23 @@ export type IServerResponse = {
     };
 };
 
-type IUser = {
+export type IRole = {
+    _id: number;
+    name: string;
+    description: string;
+    permissions: {
+        maxStores: number;
+        maxProducts: number;
+        maxManagers: number;
+        maxEmployees: number;
+    };
+};
+
+export type IUser = {
     _id: string;
     username: string;
     email: string;
-    roles: [
-        {
-            name: string;
-            description: string;
-        }
-    ];
+    roles: IRole[];
     isAdmin: boolean;
     isPrincipalAdmin: boolean;
     isLogged: boolean;
@@ -146,6 +153,13 @@ export const register = async (
         email,
         password,
     });
+};
+
+export const getMe = async () => {
+    const { data } = await axiosApiInstance.get(`${SERVER_HOST}/me`);
+    const user = data.data;
+    user.isLogged = true;
+    localStorage.setItem('user', JSON.stringify(user));
 };
 
 export const user = (): IUser => {
@@ -311,5 +325,34 @@ export const deleteEmployee = async (storeId: string, userId: string) => {
             storeId,
             userId,
         },
+    });
+};
+
+// admin panel
+
+export const getUsers = async () => {
+    return await axiosApiInstance.get(`${SERVER_HOST}/users`);
+};
+
+export const getRoles = async () => {
+    return await axiosApiInstance.get(`${SERVER_HOST}/admin/roles`);
+};
+
+export const updateRole = async (
+    roleId: string,
+    roleName: string,
+    description: string,
+    permissions: {
+        maxStores: number;
+        maxProducts: number;
+        maxManagers: number;
+        maxEmployees: number;
+    }
+) => {
+    return await axiosApiInstance.put(`${SERVER_HOST}/admin/roles`, {
+        roleId,
+        roleName,
+        description,
+        permissions,
     });
 };

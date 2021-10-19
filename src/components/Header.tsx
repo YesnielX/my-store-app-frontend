@@ -47,7 +47,7 @@ export default () => {
                     >
                         <div className="navbar-end has-text-centered">
                             <div className="navbar-item has-dropdown is-hoverable">
-                                {user().isLogged ? (
+                                {user().isLogged && (
                                     <Link
                                         className="navbar-item"
                                         to={'/Account'}
@@ -55,8 +55,15 @@ export default () => {
                                     >
                                         Cuenta
                                     </Link>
-                                ) : (
-                                    ''
+                                )}
+                                {user().isAdmin && (
+                                    <Link
+                                        className="navbar-item"
+                                        to={'/Admin'}
+                                        key={'router-admin'}
+                                    >
+                                        Admin
+                                    </Link>
                                 )}
                                 <Link
                                     className="navbar-item"
