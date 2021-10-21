@@ -338,6 +338,23 @@ export const getRoles = async () => {
     return await axiosApiInstance.get(`${SERVER_HOST}/admin/roles`);
 };
 
+export const createRole = async (
+    roleName: string,
+    description: string,
+    permissions: {
+        maxStores: number;
+        maxProducts: number;
+        maxManagers: number;
+        maxEmployees: number;
+    }
+) => {
+    return await axiosApiInstance.post(`${SERVER_HOST}/admin/roles`, {
+        roleName,
+        description,
+        permissions,
+    });
+};
+
 export const updateRole = async (
     roleId: string,
     roleName: string,
@@ -354,5 +371,13 @@ export const updateRole = async (
         roleName,
         description,
         permissions,
+    });
+};
+
+export const deleteRole = async (roleId: string) => {
+    return await axiosApiInstance.delete(`${SERVER_HOST}/admin/roles`, {
+        data: {
+            roleId,
+        },
     });
 };
