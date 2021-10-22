@@ -178,6 +178,8 @@ export const uploadImage = async (image: FormData) => {
     return request;
 };
 
+// stores and products.
+
 export const getStores = async () => {
     return await axiosApiInstance.get(`${SERVER_HOST}/stores`);
 };
@@ -379,5 +381,14 @@ export const deleteRole = async (roleId: string) => {
         data: {
             roleId,
         },
+    });
+};
+
+// user roles
+
+export const updateUserRoles = async (userId: string, roles: IRole[]) => {
+    return await axiosApiInstance.put(`${SERVER_HOST}/user/roles`, {
+        userId,
+        roles,
     });
 };
