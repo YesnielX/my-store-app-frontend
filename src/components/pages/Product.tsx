@@ -8,6 +8,7 @@ import {
     createReport,
     deleteProduct,
     getStores,
+    getStoresAsAdmin,
     IProduct,
     IStore,
     soldProduct,
@@ -22,6 +23,7 @@ export default () => {
         state: {
             store: IStore;
             product: IProduct;
+            adminPanel: boolean;
         };
     } = useLocation();
 
@@ -99,17 +101,16 @@ export default () => {
         void deleteProduct(id).then(res => {
             if (res.status === 200) {
                 void cogoToast.success('Producto Eliminado.');
-                void fetchData();
+                history.goBack();
             }
         });
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     async function fetchData() {
-        await getStores().then(res => {
-            if (res.status === 200) {
-                if (location.state.store.author._id === user()._id) {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        if (location.state.adminPanel) {
+            void getStoresAsAdmin().then(res => {
+                if (res.status === 200) {
                     (res.data?.data?.myStores as IStore[]).find(
                         (store: IStore) => {
                             if (store._id === location.state.store._id) {
@@ -125,6 +126,23 @@ export default () => {
                         }
                     );
                 }
+            });
+            return;
+        }
+
+        await getStores().then(res => {
+            if (res.status === 200) {
+                (res.data?.data?.myStores as IStore[]).find((store: IStore) => {
+                    if (store._id === location.state.store._id) {
+                        setProduct(
+                            store.products.find(
+                                (product: IProduct) =>
+                                    product._id === location.state.product._id
+                            ) as IProduct
+                        );
+                        void cogoToast.success('Producto Actualizado');
+                    }
+                });
             }
         });
     }
@@ -132,6 +150,7 @@ export default () => {
     useEffect(() => {
         setLoading(false);
         void fetchData();
+        document.title = `${product.name} - ${location.state.store.name}`;
     }, []);
 
     const productRender = (
@@ -185,13 +204,13 @@ export default () => {
                             >
                                 <tbody>
                                     <tr>
-                                        <td className="has-text-right">
+                                        <td className="has-text-left">
                                             <strong>ID</strong>
                                         </td>
                                         <td>{product._id}</td>
                                     </tr>
                                     <tr>
-                                        <td className="has-text-right">
+                                        <td className="has-text-left">
                                             <strong>Categorias</strong>
                                         </td>
                                         <td>
@@ -208,7 +227,7 @@ export default () => {
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td className="has-text-right">
+                                        <td className="has-text-left">
                                             <strong>Tamaños</strong>
                                         </td>
                                         <td>
@@ -225,7 +244,7 @@ export default () => {
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td className="has-text-right">
+                                        <td className="has-text-left">
                                             <strong>Creacion</strong>
                                         </td>
                                         <td>
@@ -235,7 +254,7 @@ export default () => {
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td className="has-text-right">
+                                        <td className="has-text-left">
                                             <strong>Actualizacion</strong>
                                         </td>
                                         <td>
@@ -245,13 +264,13 @@ export default () => {
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td className="has-text-right">
+                                        <td className="has-text-left">
                                             <strong>Disponibles</strong>
                                         </td>
                                         <td>{product.stock}</td>
                                     </tr>
                                     <tr>
-                                        <td className="has-text-right">
+                                        <td className="has-text-left">
                                             <strong>Vendidos</strong>
                                         </td>
                                         <td>{product.solds}</td>
@@ -384,7 +403,7 @@ export default () => {
                                         ).then(res => {
                                             if (res.status === 200) {
                                                 void cogoToast.success(
-                                                    'Producto marcado como vendido.'
+                                                    'Producto vendido.'
                                                 );
                                                 void fetchData();
                                             }

@@ -7,7 +7,7 @@ export default (props: { store: IStore; reports: IReport[] }) => {
     const reports = props.reports;
     return (
         <>
-            {reports.length > 0 ? (
+            {reports && reports.length > 0 ? (
                 reports.map(report => (
                     <div className="column is-half is-5 mx-4" key={report._id}>
                         <div className="card">

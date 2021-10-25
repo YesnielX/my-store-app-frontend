@@ -37,19 +37,20 @@ export default () => {
             return storesToRender.map(store => {
                 return (
                     <Link
-                        className="column is-3"
-                        id="store"
+                        className="column is-4"
+                        id={store._id}
                         key={store.name}
                         to={{
                             pathname: '/Store',
                             state: {
                                 store: store,
+                                adminPanel: false,
                             },
                         }}
                     >
                         <div className="card">
                             <div className="card-image">
-                                <figure className="image">
+                                <figure className="image is-4by3">
                                     <img
                                         src={store.imagePath}
                                         alt="store image"
@@ -69,9 +70,9 @@ export default () => {
                     </Link>
                 );
             });
-        } else if (!storesToRender && type === 2) {
+        } else if (!storesToRender.length && type === 2) {
             return (
-                <div className="column is-4">
+                <div className="column is-7">
                     <img src="/images/empty.svg" alt="empty" />
                 </div>
             );
@@ -95,15 +96,10 @@ export default () => {
                                     15%
                                 </progress>
                             ) : (
-                                <div className="column is-3">
-                                    <div
-                                        className="card"
-                                        style={{
-                                            minHeight: '100%',
-                                        }}
-                                    >
+                                <div className="column is-4">
+                                    <div className="card">
                                         <div className="card-image">
-                                            <figure className="image is-1by1 mx-3 my-3">
+                                            <figure className="image is-4by3">
                                                 <img
                                                     src="/images/createStore.svg"
                                                     alt="store image"

@@ -1,14 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import cogoToast from 'cogo-toast';
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import {
-    createProduct,
-    getStores,
-    IServerResponse,
-    uploadImage,
-} from '../../services/api';
+import { createProduct, getStores, uploadImage } from '../../services/api';
 
 export default () => {
     const [image, setImage] = useState('/images/empty.svg');
@@ -128,14 +123,15 @@ export default () => {
             ).then(req => {
                 if (req.status === 201) {
                     void cogoToast.success('Producto creado con exito.');
+                    history.goBack();
                 }
             });
         });
-
-        void getStores();
-
-        history.goBack();
     };
+
+    useEffect(() => {
+        document.title = 'Agregar Producto';
+    }, []);
 
     return (
         <div className="section">

@@ -3,12 +3,14 @@
 import { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 
-import { getUsers, IUser, user } from '../../services/api';
+import { user } from '../../services/api';
 import Roles from '../admin/Roles';
+import Stores from '../admin/Stores';
 import Users from '../admin/Users';
 
 export default () => {
-    if (!user().isAdmin) {
+    if (!user().isAdmin && !user().isPrincipalAdmin) {
+        console.log('Not admin');
         return <Redirect to="/" />;
     }
 
@@ -21,10 +23,18 @@ export default () => {
 
             case 'roles':
                 return <Roles />;
+
+            case 'stores':
+                return <Stores />;
             default:
                 return <div>Unknown</div>;
         }
     };
+
+    useEffect(() => {
+        // change page title
+        document.title = 'Admin';
+    }, []);
 
     return (
         <>
@@ -49,6 +59,9 @@ export default () => {
                     </li>
                     <li id="roles">
                         <a>Roles</a>
+                    </li>
+                    <li id="stores">
+                        <a>Tiendas</a>
                     </li>
                 </ul>
             </div>

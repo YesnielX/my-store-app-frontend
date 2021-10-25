@@ -74,6 +74,7 @@ export default () => {
         if (!image.length) {
             setImage('/images/empty.svg');
         }
+        document.title = 'Crear Tienda';
     }, []);
 
     return (

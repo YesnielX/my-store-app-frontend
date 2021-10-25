@@ -59,6 +59,7 @@ export default () => {
     useEffect(() => {
         setLoading(true);
         void fetchData();
+        document.title = `Reporte - ${report.title}`;
     }, []);
 
     const reportRender = (

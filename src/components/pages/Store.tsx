@@ -2,11 +2,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import cogoToast from 'cogo-toast';
 import { useEffect, useState } from 'react';
-import { Redirect, useLocation } from 'react-router-dom';
+import { Redirect, useHistory, useLocation } from 'react-router-dom';
 
 import {
     getReports,
     getStores,
+    getStoresAsAdmin,
     IReport,
     IStore,
     user,
@@ -21,20 +22,44 @@ export default () => {
         pathname: string;
         state: {
             store: IStore;
+            adminPanel: boolean;
         };
     } = useLocation();
+
+    const history = useHistory();
 
     if (location.state === undefined || location.state.store === undefined) {
         return <Redirect to="/" />;
     }
 
-    const [store, setStore] = useState<IStore>();
+    const [store, setStore] = useState<IStore>(location.state.store);
     const [reports, setReports] = useState<IReport[]>();
     const [loading, setLoading] = useState(true);
 
     const [tabActived, setTabActived] = useState(1);
 
     async function fetchData() {
+        if (location.state.adminPanel) {
+            console.log('get store as admin');
+            void getStoresAsAdmin().then(res => {
+                if (res.status === 200) {
+                    setStore(
+                        res.data.data.myStores.find(
+                            (store: IStore) =>
+                                store._id === location.state.store._id
+                        )
+                    );
+                    void getReports(location.state.store._id).then(res => {
+                        if (res.status === 200) {
+                            setReports(res.data.data);
+                        }
+                    });
+                    setLoading(false);
+                }
+            });
+            return;
+        }
+
         await getStores()
             .then(async res => {
                 if (res.status === 200) {
@@ -96,23 +121,26 @@ export default () => {
                 localStorage.setItem('load', 'false');
             }
         }, 500);
+        document.title = store.name;
     }, []);
 
     const renderTab = () => {
         if (tabActived === 1) {
-            return <Products store={store as IStore} />;
-        } else if (tabActived === 2) {
-            return <Settings store={store as IStore} />;
-        } else if (
-            tabActived === 3 &&
-            !store?.employees.find(e => e._id === user()._id)
-        ) {
             return (
-                <Reports
-                    store={store as IStore}
-                    reports={reports as IReport[]}
+                <Products
+                    store={store}
+                    adminPanel={location.state.adminPanel}
                 />
             );
+        } else if (tabActived === 2) {
+            return (
+                <Settings
+                    store={store}
+                    adminPanel={location.state.adminPanel}
+                />
+            );
+        } else if (tabActived === 3) {
+            return <Reports store={store} reports={reports as IReport[]} />;
         }
     };
 
@@ -122,12 +150,23 @@ export default () => {
                 <section className="hero">
                     <div className="hero-body">
                         <div className="container">
-                            <h1 className="title">{store?.name}</h1>
+                            <a
+                                className="level-left title is-3"
+                                onClick={() => history.goBack()}
+                            >
+                                <i className="fas fa-chevron-left"></i>
+                                &nbsp; Volver
+                            </a>
+                            <h1 className="title" id={store._id}>
+                                {store?.name}
+                            </h1>
                             <div className="tabs is-centered">
-                                {store?.author._id === user()._id ||
-                                store?.managers.find(
+                                {!store?.employees.find(
                                     e => e._id === user()._id
-                                ) ? (
+                                ) ||
+                                (location.state.adminPanel && user().isAdmin) ||
+                                (location.state.adminPanel &&
+                                    user().isPrincipalAdmin) ? (
                                     <ul
                                         id="tab-list"
                                         onClick={(e: any) => {
@@ -156,9 +195,17 @@ export default () => {
                                         <li id="2">
                                             <a>Ajustes</a>
                                         </li>
-                                        <li id="3">
-                                            <a>Reportes</a>
-                                        </li>
+                                        {!store?.employees.find(
+                                            e => e._id === user()._id
+                                        ) ||
+                                        (location.state.adminPanel &&
+                                            user().isAdmin) ||
+                                        (location.state.adminPanel &&
+                                            user().isPrincipalAdmin) ? (
+                                            <li id="3">
+                                                <a>Reportes</a>
+                                            </li>
+                                        ) : null}
                                     </ul>
                                 ) : null}
                             </div>

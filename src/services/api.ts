@@ -332,6 +332,10 @@ export const deleteEmployee = async (storeId: string, userId: string) => {
 
 // admin panel
 
+export const getStoresAsAdmin = async () => {
+    return await axiosApiInstance.get(`${SERVER_HOST}/admin/stores`);
+};
+
 export const getUsers = async () => {
     return await axiosApiInstance.get(`${SERVER_HOST}/users`);
 };

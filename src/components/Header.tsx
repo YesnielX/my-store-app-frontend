@@ -56,7 +56,7 @@ export default () => {
                                         Cuenta
                                     </Link>
                                 )}
-                                {user().isAdmin && (
+                                {user().isAdmin || user().isPrincipalAdmin ? (
                                     <Link
                                         className="navbar-item"
                                         to={'/Admin'}
@@ -64,7 +64,7 @@ export default () => {
                                     >
                                         Admin
                                     </Link>
-                                )}
+                                ) : null}
                                 <Link
                                     className="navbar-item"
                                     to={'/Contact'}

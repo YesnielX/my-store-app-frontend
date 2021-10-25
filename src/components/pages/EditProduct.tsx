@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import cogoToast from 'cogo-toast';
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { editProduct, IProduct, IStore, uploadImage } from '../../services/api';
@@ -130,6 +130,10 @@ export default () => {
             });
         });
     };
+
+    useEffect(() => {
+        document.title = `Editar Producto - ${product.name}`;
+    }, []);
 
     return (
         <div className="section">

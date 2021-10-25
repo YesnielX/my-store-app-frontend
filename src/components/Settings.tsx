@@ -10,14 +10,16 @@ import {
     deleteEmployee,
     deleteManager,
     getStores,
+    getStoresAsAdmin,
     IStore,
     updateStore,
     uploadImage,
     user,
 } from '../services/api';
 
-export default (props: { store: IStore }) => {
+export default (props: { store: IStore; adminPanel: boolean }) => {
     const [store, setStore] = useState<IStore>(props.store);
+    console.log(store);
 
     const [image, setImage] = useState(store.imagePath);
     const [name, setName] = useState(props.store?.name);
@@ -57,33 +59,44 @@ export default (props: { store: IStore }) => {
     };
 
     async function fetchData() {
-        await getStores().then(res => {
-            if (res.status === 200) {
-                if (store.author._id === user()._id) {
+        if (props.adminPanel) {
+            console.log('admin lod');
+            await getStoresAsAdmin().then(req => {
+                if (req.status === 200) {
                     setStore(
-                        res.data.data.myStores.find(
-                            (store: IStore) => store._id === store._id
+                        req.data.data.myStores.find(
+                            (store: IStore) => store._id === props.store._id
                         )
                     );
-                    console.log('You Store');
-                } else if (store.managers.includes(user())) {
-                    setStore(
-                        res.data.data.managerStores.find(
-                            (store: IStore) => store._id === store._id
-                        )
-                    );
-                    console.log('You Manager Store');
+                    void cogoToast.success('Tienda Actualizada!');
                 }
-                if (store.employees.find(e => e._id === user()._id)) {
-                    setStore(
-                        res.data.data.employeesStores.find(
-                            (store: IStore) => store._id === store._id
-                        )
-                    );
-                    console.log('You Employee Store');
+            });
+        } else {
+            await getStores().then(res => {
+                if (res.status === 200) {
+                    if (store.author._id === user()._id) {
+                        setStore(
+                            res.data.data.myStores.find(
+                                (u: IStore) => u._id === store._id
+                            )
+                        );
+                        console.log('You Store');
+                    } else if (store.managers.find(u => u._id === user()._id)) {
+                        setStore(
+                            res.data.data.managerStores.find(
+                                (store: IStore) => store._id === store._id
+                            )
+                        );
+                        console.log('You Manager Store');
+                    }
+                    void cogoToast.success('Tienda Actualizada!');
                 }
-            }
-        });
+            });
+        }
+        const StoreName = document.getElementById(store._id);
+        if (StoreName) {
+            StoreName.innerText = store.name;
+        }
     }
 
     const sendStoreUpdate = () => {
@@ -169,7 +182,9 @@ export default (props: { store: IStore }) => {
                                 />
                             </div>
                         </div>
-                        {store?.author._id === user()._id && (
+                        {store?.author._id === user()._id ||
+                        (props.adminPanel && user().isAdmin) ||
+                        (props.adminPanel && user().isPrincipalAdmin) ? (
                             <div className="field mx-2">
                                 <label className="label">Agregar Manager</label>
                                 <div className="control">
@@ -271,7 +286,7 @@ export default (props: { store: IStore }) => {
                                     </div>
                                 </div>
                             </div>
-                        )}
+                        ) : null}
                         <div className="field mx-2">
                             <label className="label">Agregar Empleado</label>
                             <div className="control">
@@ -370,6 +385,15 @@ export default (props: { store: IStore }) => {
                                     ))}
                                 </div>
                             </div>
+                        </div>
+                        <div className="field mx-2">
+                            <label className="label">Dueño</label>
+                            <input
+                                type="text"
+                                className="input"
+                                defaultValue={store.author.email}
+                                disabled
+                            />
                         </div>
                     </div>
                 </section>

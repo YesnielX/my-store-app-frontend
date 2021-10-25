@@ -47,6 +47,7 @@ export default () => {
         if (user().isLogged) {
             window.location.href = '/';
         }
+        document.title = 'Registro';
     }, []);
 
     return (

@@ -32,19 +32,6 @@ export default () => {
         });
     };
 
-    const updateUsersRoles = () => {
-        // search users with roles and update
-        const usersWithRoles = users.filter(user => user.roles.length > 0);
-
-        if (usersWithRoles.length > 0) {
-            usersWithRoles.forEach(user => {
-                const userRoles = user.roles.map(role => role);
-                void updateUserRoles(user._id, userRoles);
-            });
-            void cogoToast.success('Roles de usuarios actualizados.');
-        }
-    };
-
     const renderUsers = (users: IUser[]) => {
         return users.map(user => {
             return (

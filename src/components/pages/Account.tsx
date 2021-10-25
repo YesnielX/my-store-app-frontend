@@ -10,6 +10,7 @@ export default () => {
     }
 
     useEffect(() => {
+        document.title = 'Cuenta';
         void getMe();
     });
 

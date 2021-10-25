@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import cogoToast from 'cogo-toast';
 import { BaseSyntheticEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { getStores, login } from '../../services/api';
+import { login } from '../../services/api';
 
 export default () => {
     const [email, setEmail] = useState('');
@@ -20,6 +19,10 @@ export default () => {
         e.preventDefault();
         e.stopPropagation();
     };
+
+    useEffect(() => {
+        document.title = 'Iniciar Sesion';
+    }, []);
 
     return (
         <section className="section mt-6">
@@ -78,3 +81,6 @@ export default () => {
         </section>
     );
 };
+function useEffect(arg0: () => void, arg1: never[]) {
+    throw new Error('Function not implemented.');
+}
