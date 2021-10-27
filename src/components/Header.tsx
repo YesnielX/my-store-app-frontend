@@ -22,9 +22,14 @@ export default () => {
                     aria-label="main navigation"
                 >
                     <div className="navbar-brand">
-                        <a className="navbar-item" href="/">
+                        <Link
+                            className="navbar-item"
+                            to="/"
+                            onClick={() => setIsActive(false)}
+                            key="Home"
+                        >
                             <h1 className="title">My Store App</h1>
-                        </a>
+                        </Link>
 
                         <a
                             className="navbar-burger"
@@ -41,7 +46,7 @@ export default () => {
 
                     <div
                         className={`navbar-menu animate__animated ${
-                            isActive ? 'is-active animate__flipInX' : ''
+                            isActive ? 'is-active animate__slideInLeft' : ''
                         }`}
                         onClick={() => setIsActive(false)}
                     >
@@ -79,6 +84,15 @@ export default () => {
                                 >
                                     Sobre nosotros
                                 </Link>
+                                {user().isLogged && (
+                                    <Link
+                                        className="navbar-item"
+                                        to={'/CreateIssue'}
+                                        key={'router-report'}
+                                    >
+                                        Reportar un problema
+                                    </Link>
+                                )}
                             </div>
                             <div className="navbar-item">
                                 <div className="">

@@ -128,6 +128,17 @@ export type IReport = {
     updatedAt: Date;
 };
 
+export type IAppReport = {
+    _id: string;
+    title: string;
+    description: string;
+    imagePath: string;
+    solved: boolean;
+    author: IUser;
+    createdAt: Date;
+    updatedAt: Date;
+};
+
 export const login = async (email: string, password: string) => {
     return await axiosApiInstance
         .get(`${SERVER_HOST}/user`, {
@@ -394,5 +405,37 @@ export const updateUserRoles = async (userId: string, roles: IRole[]) => {
     return await axiosApiInstance.put(`${SERVER_HOST}/user/roles`, {
         userId,
         roles,
+    });
+};
+
+// app reports
+
+export const getAppReports = async () => {
+    return await axiosApiInstance.get(`${SERVER_HOST}/app/reports`);
+};
+
+export const createAppReport = async (
+    title: string,
+    description: string,
+    imagePath: string
+) => {
+    return await axiosApiInstance.post(`${SERVER_HOST}/app/reports`, {
+        title,
+        description,
+        imagePath,
+    });
+};
+
+export const markAppReportAsResolved = async (reportId: string) => {
+    return await axiosApiInstance.put(`${SERVER_HOST}/app/reports`, {
+        reportId,
+    });
+};
+
+export const deleteAppReport = async (reportId: string) => {
+    return await axiosApiInstance.delete(`${SERVER_HOST}/app/reports`, {
+        data: {
+            reportId,
+        },
     });
 };

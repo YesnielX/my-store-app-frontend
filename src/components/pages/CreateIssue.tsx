@@ -2,11 +2,12 @@
 import cogoToast from 'cogo-toast';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
-import { createStore, uploadImage } from '../../services/api';
+import { createAppReport, uploadImage } from '../../services/api';
 
 export default () => {
     const [image, setImage] = useState('');
-    const [name, setName] = useState('');
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
 
     const inputFile = useRef<HTMLInputElement>(null);
 
@@ -41,23 +42,23 @@ export default () => {
         });
     };
 
-    const sendCreateStore = () => {
+    const sendCreateAppReport = () => {
         if (
             image === '' ||
             image === '/images/empty.svg' ||
-            name === '' ||
-            name.length < 3
+            title === '' ||
+            title.length < 3
         ) {
-            void cogoToast.error('Faltan datos');
+            void cogoToast.error('Complete todos los campos');
             return;
         }
 
-        void cogoToast.loading('Creando Tienda...').then(() => {
-            void createStore(name, image).then(res => {
+        void cogoToast.loading('Creando Reporte...').then(() => {
+            void createAppReport(title, description, image).then(res => {
                 console.log(res);
 
                 if (res.status === 201) {
-                    void cogoToast.success('Tienda Creada!.');
+                    void cogoToast.success('Reporte enviado!.');
                     window.location.href = '/';
                 }
             });
@@ -68,7 +69,7 @@ export default () => {
         if (!image.length) {
             setImage('/images/empty.svg');
         }
-        document.title = 'Crear Tienda';
+        document.title = 'Crear Reporte';
     }, []);
 
     return (
@@ -93,15 +94,11 @@ export default () => {
                         </label>
                     </div>
                     <div className="columns">
-                        <div className="column is-5-desktop is-5-tablet is-12-mobile">
-                            <figure className="image">
+                        <div className="column ">
+                            <figure className="image is-4by3">
                                 <img
                                     src={image}
-                                    alt="image"
-                                    id="image"
-                                    style={{
-                                        maxHeight: '500px',
-                                    }}
+                                    alt="Report Image"
                                     onClick={() => {
                                         inputFile.current?.click();
                                     }}
@@ -119,12 +116,30 @@ export default () => {
                                     <input
                                         className="input"
                                         type="text"
-                                        placeholder="Nombre"
-                                        onChange={e => setName(e.target.value)}
+                                        placeholder="Titulo"
+                                        onChange={e => setTitle(e.target.value)}
                                     />
                                     <span className="icon is-small is-left">
                                         <i className="fas fa-signature"></i>
                                     </span>
+                                </p>
+                            </dt>
+                            <br />
+                            <dt
+                                style={{
+                                    fontSize: '1.1em',
+                                }}
+                            >
+                                <p className="control has-icons-left">
+                                    <textarea
+                                        cols={30}
+                                        rows={10}
+                                        className="textarea"
+                                        placeholder="Descripcion"
+                                        onChange={e =>
+                                            setDescription(e.target.value)
+                                        }
+                                    ></textarea>
                                 </p>
                             </dt>
 
@@ -137,9 +152,9 @@ export default () => {
                             </button>
                             <button
                                 className="button is-full is-primary mx-1 my-1"
-                                onClick={sendCreateStore}
+                                onClick={sendCreateAppReport}
                             >
-                                Agregar
+                                Reportar
                             </button>
                             <div className="column is-hidden-desktop is-1-tablet is-hidden-mobile"></div>
                         </div>

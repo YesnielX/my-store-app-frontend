@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 
 import { user } from '../../services/api';
+import Issues from '../admin/Issues';
 import Roles from '../admin/Roles';
 import Stores from '../admin/Stores';
 import Users from '../admin/Users';
@@ -26,8 +27,11 @@ export default () => {
 
             case 'stores':
                 return <Stores />;
+            case 'reports':
+                return <Issues />;
             default:
-                return <div>Unknown</div>;
+                setTabActived('users');
+                return <Users />;
         }
     };
 
@@ -62,6 +66,9 @@ export default () => {
                     </li>
                     <li id="stores">
                         <a>Tiendas</a>
+                    </li>
+                    <li id="reports">
+                        <a>Reportes</a>
                     </li>
                 </ul>
             </div>

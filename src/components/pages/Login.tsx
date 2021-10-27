@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { BaseSyntheticEvent, useState } from 'react';
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { login } from '../../services/api';
@@ -81,6 +81,3 @@ export default () => {
         </section>
     );
 };
-function useEffect(arg0: () => void, arg1: never[]) {
-    throw new Error('Function not implemented.');
-}
