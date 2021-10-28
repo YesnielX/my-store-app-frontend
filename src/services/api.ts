@@ -139,6 +139,8 @@ export type IAppReport = {
     updatedAt: Date;
 };
 
+// user
+
 export const login = async (email: string, password: string) => {
     return await axiosApiInstance
         .get(`${SERVER_HOST}/user`, {
@@ -166,6 +168,26 @@ export const register = async (
     });
 };
 
+export const ForgetPassword = async (email: string) => {
+    return await axiosApiInstance.post(`${SERVER_HOST}/user/forget-password`, {
+        email,
+    });
+};
+
+export const ResetPassword = async (password: string, token: string) => {
+    return await axios.post(
+        `${SERVER_HOST}/user/reset-password`,
+        {
+            password,
+        },
+        {
+            headers: {
+                token,
+            },
+        }
+    );
+};
+
 export const getMe = async () => {
     const { data } = await axiosApiInstance.get(`${SERVER_HOST}/me`);
     const user = data.data;
@@ -179,6 +201,8 @@ export const user = (): IUser => {
     ) as IUser;
     return user;
 };
+
+// images
 
 export const uploadImage = async (image: FormData) => {
     const request = await fetch(`${SERVER_HOST}/images`, {
