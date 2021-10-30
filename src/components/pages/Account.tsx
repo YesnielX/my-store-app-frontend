@@ -1,12 +1,14 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import QRCode from 'react-qr-code';
 import { Link } from 'react-router-dom';
 
 import { getMe, user } from '../../services/api';
 
 export default () => {
-    if ([user()].length < 0 || !user().isLogged) {
-        console.log('User not logged in');
-        window.location.href = '/';
+    const [showQRLogin, setShowQRLogin] = useState(false);
+
+    if (!user().isLogged) {
+        window.location.href = '/Login';
     }
 
     useEffect(() => {
@@ -24,7 +26,6 @@ export default () => {
             <div className="mt-4">
                 <fieldset
                     className="has-text-centered mx-auto"
-                    disabled
                     style={{ maxWidth: 400 }}
                 >
                     <div className="field mx-auto">
@@ -33,6 +34,7 @@ export default () => {
                             <input
                                 className="input "
                                 type="text"
+                                disabled
                                 placeholder={user().username}
                             />
                         </div>
@@ -44,6 +46,7 @@ export default () => {
                             <input
                                 className="input"
                                 type="email"
+                                disabled
                                 placeholder={user().email}
                             />
                         </div>
@@ -59,8 +62,38 @@ export default () => {
                             ))}
                         </div>
                     </div>
+                    <div className="field mx-auto mt-5">
+                        <div className="control">
+                            <label className="label level-left">QR Login</label>
+                            {showQRLogin ? (
+                                <div>
+                                    <QRCode value={user().token} />
+                                    <br />
+                                    <br />
+                                    <button
+                                        className="button is-info"
+                                        disabled={false}
+                                        onClick={() => setShowQRLogin(false)}
+                                    >
+                                        Hide QR
+                                    </button>
+                                </div>
+                            ) : (
+                                <button
+                                    className="button is-primary"
+                                    disabled={false}
+                                    onClick={() => setShowQRLogin(true)}
+                                >
+                                    Show QR
+                                </button>
+                            )}
+                        </div>
+                    </div>
 
-                    <button className="button is-primary is-medium is-fullwidth my-5">
+                    <button
+                        className="button is-primary is-medium is-fullwidth my-5"
+                        disabled
+                    >
                         Save
                     </button>
                 </fieldset>

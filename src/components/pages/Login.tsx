@@ -1,12 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import cogoToast from 'cogo-toast';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
+import QrReader from 'react-qr-reader';
 import { Link } from 'react-router-dom';
+import isJWT from 'validator/lib/isJWT';
 
-import { login } from '../../services/api';
+import { getMe, login } from '../../services/api';
 
 export default () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    const [showQRScanner, setShowQRScanner] = useState(false);
 
     const setLogin = (e: BaseSyntheticEvent) => {
         console.log(email, password);
@@ -18,6 +22,56 @@ export default () => {
         });
         e.preventDefault();
         e.stopPropagation();
+    };
+
+    const showQRScannerHandler = () => {
+        setShowQRScanner(!showQRScanner);
+
+        if (
+            !navigator.mediaDevices === undefined ||
+            !navigator.mediaDevices.getUserMedia
+        ) {
+            void cogoToast.error(
+                'Su navegador no es compatible con dispositivos multimedia'
+            );
+            void navigator.mediaDevices.getUserMedia({ video: true });
+
+            return;
+        }
+    };
+
+    const handleScanError = (err: any) => {
+        console.error(err);
+        void cogoToast.error('Error al escanear el codigo QR');
+        setShowQRScanner(false);
+    };
+
+    const handleScanSuccess = (data: any) => {
+        if (data) {
+            if (!isJWT(data)) {
+                void cogoToast.error(
+                    'Codigo no escaneado correctamente, intente de nuevo'
+                );
+            } else {
+                console.log(data);
+                void cogoToast.success('Codigo QR escaneado con exito!');
+                localStorage.setItem(
+                    'user',
+                    JSON.stringify({
+                        token: data as string,
+                    })
+                );
+
+                setTimeout(() => {
+                    void getMe().then(() => {
+                        window.location.href = '/';
+                    });
+                }, 2000);
+            }
+        } else {
+            void cogoToast.error('Intente de nuevo.');
+        }
+        setShowQRScanner(false);
     };
 
     useEffect(() => {
@@ -33,7 +87,7 @@ export default () => {
                             <h1 className="title is-4">Inicio De Sesion</h1>
                             <p className="description">Bienvenido de nuevo!</p>
                             <br />
-                            <form>
+                            <div>
                                 <div className="field">
                                     <div className="control">
                                         <input
@@ -64,6 +118,36 @@ export default () => {
                                 >
                                     Iniciar sesion
                                 </button>
+                                {showQRScanner && (
+                                    <div className="modal is-active">
+                                        <div className="modal-background"></div>
+                                        <div className="modal-content">
+                                            <QrReader
+                                                key="video"
+                                                delay={2000}
+                                                onError={handleScanError}
+                                                onScan={handleScanSuccess}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <button
+                                            className="modal-close is-large"
+                                            aria-label="close"
+                                            onClick={() =>
+                                                setShowQRScanner(false)
+                                            }
+                                        ></button>
+                                    </div>
+                                )}
+                                <br />
+                                <button
+                                    className="button is-block is-info is-fullwidth is-medium"
+                                    onClick={() => {
+                                        showQRScannerHandler();
+                                    }}
+                                >
+                                    Login con codigo QR
+                                </button>
                                 <br />
                                 <br />
                                 <Link to="/Register">Registrarse</Link>{' '}
@@ -73,7 +157,7 @@ export default () => {
                                 </Link>{' '}
                                 &nbsp;·&nbsp;
                                 <Link to="/Contact">Ayuda</Link>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
